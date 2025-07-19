@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <h1>Deactivate Customer</h1>
+    <p>Are you sure you want to deactivate {{ customer.full_name }}?</p>
+    
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-outline-danger"><i class="fas fa-trash"></i> Confirm Deactivation</button>
+        <a href="{% url 'customer_list'%}" class="btn btn-outline-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

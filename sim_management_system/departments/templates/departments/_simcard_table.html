@@ -1,0 +1,143 @@
+{% load static %}
+<link href="{% static 'css/table.css' %}" rel="stylesheet" />
+<form method="GET" class="filter-bar">
+    <div class="filter-row">
+      <div class="form-group">
+        <label for="searchQuery" class="form-label">
+          <i class="fas fa-search me-2"></i>Search SIM Cards
+        </label>
+        <div class="search-input">
+          <input type="text" class="form-control" id="searchQuery" name="q"
+                 placeholder="Search by Vehicle, Mobile, IMEI..." value="{{ search_query }}" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="filterStatus" class="form-label">
+          <i class="fas fa-signal me-2"></i>Status Filter
+        </label>
+        <select class="form-select" id="filterStatus" name="status">
+          <option value="all" {% if filter_status == 'all' %}selected{% endif %}>All Statuses</option>
+          {% for status in all_sim_statuses %}
+            <option value="{{ status }}" {% if filter_status == status %}selected{% endif %}>{{ status }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="filterType" class="form-label">
+          <i class="fas fa-tags me-2"></i>Type Filter
+        </label>
+        <select class="form-select" id="filterType" name="sim_type">
+          <option value="all" {% if filter_type == 'all' %}selected{% endif %}>All Types</option>
+          {% for sim_type in all_sim_types %}
+            <option value="{{ sim_type }}" {% if filter_type == sim_type %}selected{% endif %}>{{ sim_type }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="startDate" class="form-label">
+          <i class="fas fa-calendar-alt me-2"></i>From Date
+        </label>
+        <input type="date" class="form-control" id="startDate" name="start_date" value="{{ request.GET.start_date }}">
+      </div>
+
+      <div class="form-group">
+        <label for="endDate" class="form-label">
+          <i class="fas fa-calendar-alt me-2"></i>To Date
+        </label>
+        <input type="date" class="form-control" id="endDate" name="end_date" value="{{ request.GET.end_date }}">
+      </div>
+
+      <button type="submit" class="btn btn-secondary">
+        <i class="fas fa-filter me-2"></i>Apply Filters
+      </button>
+
+      {% if search_query or filter_status != 'all' or filter_type != 'all' or request.GET.start_date or request.GET.end_date %}
+        <a href="{% url 'departments_list'  %}" class="btn btn-secondary">
+          <i class="fas fa-times me-2"></i>Clear Filters
+        </a>
+      {% endif %}
+    </div>
+  </form>
+  
+<div class="col-md-12 text-md-end my-3">
+  <a href="{% url 'simcard_create' %}" class="btn btn-outline-success">
+    <i class="fas fa-plus-circle me-2"></i>Add New SIM Card
+  </a>
+</div>
+<div class="scroll-container">
+  <table class="sim-table">
+    <thead>
+      <tr>
+        <th><i class="fas fa-truck me-2"></i>Vehicle</th>
+        <th><i class="fas fa-mobile-alt me-2"></i>Mobile</th>
+        <th><i class="fas fa-fingerprint me-2"></i>IMEI</th>
+        <th><i class="fas fa-microchip me-2"></i>Transporter</th>
+        <th><i class="fas fa-sim-card me-2"></i>Type</th>
+        <th><i class="fas fa-signal me-2"></i>Status</th>
+        <th><i class="fas fa-cogs me-2"></i>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for simcard in simcards %}
+      <tr>
+        <td>{{ simcard.vehicle_reg_no|default:"N/A" }}</td>
+        {# Use N/A for clarity #}
+        <td>{{ simcard.mobile_number|default:"N/A" }}</td>
+        <td>{{ simcard.imei_number|default:"N/A" }}</td>
+        <td>{{ simcard.transporter_name|default:"N/A" }}</td>
+        <td>{{ simcard.get_sim_type_display|default:"N/A" }}</td>
+        {# Handle default for display method #}
+        <td>
+          {% if simcard.sim_status == 'Active' %}
+          <span class="badge bg-success">Active</span>
+          {% elif simcard.sim_status == 'Inactive' %}
+          <span class="badge bg-danger">Inactive</span>
+          {% else %}
+          <span class="badge bg-secondary"
+            >{{ simcard.get_sim_status_display|default:"Unknown" }}</span
+          >
+          {# Fallback for other statuses #} {% endif %}
+        </td>
+        <td class="text-center">
+          {# Center align action buttons #}
+          <div class="btn-group" role="group" aria-label="SIM Card Actions">
+            {# Group buttons for better layout #}
+            <a
+              href="{% url 'simcard_update' simcard.pk %}"
+              class="btn btn-sm btn-outline-secondary mx-1"
+              title="Edit SIM Card"
+            >
+              <i class="fas fa-edit"></i> {# Use icon with text #}
+            </a>
+            <a
+              href="{% url 'simcard_delete' simcard.pk %}"
+              class="btn btn-sm btn-outline-danger mx-1"
+              title="Delete SIM Card"
+            >
+              <i class="fas fa-trash-alt"></i> {# Use icon with text #}
+            </a>
+            <a
+              href="{% url 'simcard_detail' simcard.pk %}"
+              class="btn btn-sm btn-outline-primary mx-1"
+              title="View Details"
+            >
+              <i class="fas fa-eye"></i> {# Use icon with text #}
+            </a>
+          </div>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="7" class="text-center text-muted py-4">
+          {/* Corrected colspan to 7 */}
+          <i class="fas fa-info-circle me-2"></i> No SIM cards found matching
+          your criteria.
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

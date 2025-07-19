@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">{{ customer.full_name }}</h1>
+    <div class="card">
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">Phone</dt>
+                <dd class="col-sm-9">{{ customer.phone }}</dd>
+
+                <dt class="col-sm-3">Email</dt>
+                <dd class="col-sm-9">{{ customer.email|default:"-" }}</dd>
+
+                <dt class="col-sm-3">Address</dt>
+                <dd class="col-sm-9">{{ customer.address|default:"-" }}</dd>
+
+                <dt class="col-sm-3">ID Proof</dt>
+                <dd class="col-sm-9">
+                    {{ customer.get_id_proof_type_display|default:"-" }}
+                    {{ customer.id_proof_number|default:"" }}
+                    {% if customer.id_proof_file %}
+                    <br><a href="{{ customer.id_proof_file.url }}" target="_blank" class="btn btn-sm btn-outline-primary mt-2"><i class="fas fa-file-alt"></i> View Document</a>
+                    {% endif %}
+                </dd>
+
+                <dt class="col-sm-3">Status</dt>
+                <dd class="col-sm-9">
+                    {% if customer.is_active %}
+                        <span class="badge bg-success">Active</span>
+                    {% else %}
+                        <span class="badge bg-secondary">Inactive</span>
+                    {% endif %}
+                </dd>
+            </dl>
+            <div class="mt-4">
+                <a href="{% url 'customer_list' %}" class="btn btn-outline-secondary"><i class="fas fa-arrow-left"></i> Back to List</a>
+                <form method="post" action="{% url 'customer_delete' customer.pk %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-danger ms-2"
+                            onclick="return confirm('Are you sure you want to {% if customer.is_active %}deactivate{% else %}activate{% endif %} {{ customer.full_name }}?')">
+                        <i class="fas fa-power-off"></i> {% if customer.is_active %}Deactivate{% else %}Activate{% endif %}
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

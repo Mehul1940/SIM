@@ -1,0 +1,1 @@
+# Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process  <- If virtual environment fails

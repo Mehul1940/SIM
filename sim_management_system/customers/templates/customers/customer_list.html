@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4 text-center mt-5">
+    <h1>Customers List</h1>
+    {% if messages %}
+        <div class="mb-3">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    <div class="table-responsive mt-5">
+        <table class="table table-striped table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <th class="text-center">Name</th>
+                    <th class="text-center">Phone</th>
+                    <th class="text-center">Email</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for customer in customers %}
+                <tr>
+                    <td>{{ customer.full_name }}</td>
+                    <td class="text-center">{{ customer.phone }}</td>
+                    <td class="text-center">{{ customer.email|default:"-" }}</td>
+                    <td class="text-center">
+                        {% if customer.is_active %}
+                            <span class="badge bg-success">Active</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Inactive</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-center">
+                        <a href="{% url 'customer_detail' customer.pk %}" class="btn btn-sm btn-outline-info" title="View Details"><i class="fas fa-eye"></i> Detail</a>
+                        <form method="post" action="{% url 'customer_delete' customer.pk %}" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-outline-danger ms-2" title="{% if customer.is_active %}Deactivate{% else %}Activate{% endif %} Customer"
+                                    onclick="return confirm('Are you sure you want to {% if customer.is_active %}deactivate{% else %}activate{% endif %} {{ customer.full_name }}?')">
+                                <i class="fas fa-power-off"></i> {% if customer.is_active %}Deactivate{% else %}Activate{% endif %}
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">No customers found</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

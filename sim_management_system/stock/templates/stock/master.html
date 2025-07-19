@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<link href="{% static 'css/table.css' %}" rel="stylesheet" />
+
+<div class="container-fluid py-4">
+  <div class="page-header d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="mb-1"><i class="fas fa-cubes me-3 text-primary"></i>Stock Records</h1>
+      <p class="text-muted page-subtitle">Monitor and manage all device dispatch and return activities</p>
+    </div>
+  </div>
+
+  <form method="get" class="card shadow-sm mb-4 p-3 filter-bar">
+    <div class="row g-3 align-items-end">
+      <div class="col-md-3 col-sm-6">
+        <label for="department" class="form-label text-muted small">
+          <i class="fas fa-building me-2"></i>Department
+        </label>
+        <select name="department" id="department" class="form-select form-select-sm">
+          <option value="">All Departments</option>
+          {% for dept in departments %}
+            <option value="{{ dept.id }}" {% if dept.id|stringformat:"s" == selected_department|stringformat:"s" %}selected{% endif %}>{{ dept.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-2 col-sm-6">
+        <label for="status" class="form-label text-muted small">
+          <i class="fas fa-signal me-2"></i>Status
+        </label>
+        <select name="status" id="status" class="form-select form-select-sm">
+          <option value="">All Statuses</option>
+          {% for value, display in status_choices %}
+            <option value="{{ value }}" {% if value == selected_status %}selected{% endif %}>{{ display }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-2 col-sm-6">
+        <label for="start_date" class="form-label text-muted small">
+          <i class="fas fa-calendar-alt me-2"></i>Start Date
+        </label>
+        <input type="date" name="start_date" id="start_date" class="form-control form-control-sm" value="{{ start_date|default:'' }}">
+      </div>
+
+      <div class="col-md-2 col-sm-6">
+        <label for="end_date" class="form-label text-muted small">
+          <i class="fas fa-calendar-day me-2"></i>End Date
+        </label>
+        <input type="date" name="end_date" id="end_date" class="form-control form-control-sm" value="{{ end_date|default:'' }}">
+      </div>
+
+      <div class="col-md-2 col-sm-6">
+        <label for="search_query" class="form-label text-muted small">
+          <i class="fas fa-search me-2"></i>Search
+        </label>
+        <input type="text" name="search_query" id="search_query" class="form-control form-control-sm" value="{{ search_query|default:'' }}" placeholder="Search by name, mobile, etc.">
+      </div>
+
+       <div class="col-md-2 col-sm-6 d-grid">
+        <button type="submit" class="btn btn-secondary btn-sm">
+          <i class="fas fa-filter me-2"></i>Apply Filters
+        </button>
+      </div>
+
+      <div class="col-md-1 col-sm-6 d-grid ms-2">
+        {% if selected_department or start_date or end_date or search_query %}
+          <a href="{% url 'master' %}" class="btn btn-secondary btn-sm">
+            <i class="fas fa-times me-2"></i>Clear Filters
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </form>
+ <form method="post" enctype="multipart/form-data" action="{% url 'import_stock_excel' %}" class="d-flex align-items-end gap-2 mb-3">
+  {% csrf_token %}
+  <div class="form-group">
+    <label for="excel_file" class="form-label small text-muted"><i class="fas fa-file-upload me-2"></i>Upload Excel (.csv/.xlsx)</label>
+    <input type="file" name="excel_file" accept=".csv,.xlsx" required class="form-control form-control-sm">
+  </div>
+  <button type="submit" class="btn btn-primary btn-sm mt-auto">
+    <i class="fas fa-upload me-1"></i>Import Bulk Stock
+  </button>
+</form>
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-dark text-white d-flex align-items-center justify-content-between">
+      <div>
+        <i class="fas fa-clipboard-list me-2"></i>
+        <span>All Device Records</span>
+      </div>
+      <div class="col-md-2 col-sm-6 d-grid align-self-end">
+        <a href="{% url 'export_stock_excel' %}?{{ request.GET.urlencode }}" class="btn btn-success btn-sm w-100">
+          <i class="fas fa-file-excel me-2"></i><span class="d-none d-md-inline">Export to Excel</span>
+        </a>
+      </div>
+      <span class="badge bg-light text-dark rounded-pill py-2 px-3">{{ all_records|length }} Records</span>
+    </div>
+    <div class="card-body p-0">
+      <div class="scroll-container">
+        <table class="table sim-table">
+          <thead>
+            <tr>
+              <th class="text-center"><i class="fas fa-tag me-1"></i>Type</th>
+              <th><i class="fas fa-map me-1"></i>Departments</th>
+              <th><i class="fas fa-city me-1"></i>City</th>
+              <th><i class="fas fa-user-circle me-1"></i>Person</th>
+              <th><i class="fas fa-mobile-alt me-1"></i>Mobile No.</th>
+              <th><i class="fa-solid fa-fingerprint me-1"></i>IMEI No.</th>
+              <th><i class="fas fa-barcode me-1"></i>Serial No.</th>
+              <th><i class="fas fa-calendar-alt me-1"></i>Date</th>
+              <th><i class="fas fa-paper-plane me-1"></i>Parcel Sent By</th>
+              <th><i class="fas fa-file-invoice me-1"></i>Docket Number</th>
+              <th><i class="fas fa-user-check me-1"></i>Collected Person</th>
+              <th><i class="fas fa-signal me-1"></i>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for rec in all_records %}
+            <tr>
+              <td class="text-center">
+                {% if rec.record_type == "Dispatch" %}
+                  <span class="badge bg-primary px-2 py-1"><i class="fas fa-arrow-alt-circle-up me-1"></i>Dispatch</span>
+                {% else %}
+                  <span class="badge bg-success px-2 py-1"><i class="fas fa-arrow-alt-circle-down me-1"></i>Return</span>
+                {% endif %}
+              </td>
+              <td>{{ rec.location.name }}</td>
+              <td>{{ rec.city|default:"N/A" }}</td>
+              <td>{{ rec.person }}</td>
+              <td>{{ rec.mobile_no }}</td>
+              <td>{{ rec.imei_no }}</td>
+              <td>{{ rec.serial_number }}</td>
+              <td>{{ rec.date|date:"d M Y" }}</td>
+              <td>{{ rec.parcel_sent_by|default:"N/A" }}</td>
+              <td>{{ rec.docket_number|default:"N/A" }}</td>
+              <td>{{ rec.collected_person_name|default:"N/A" }}</td>
+              <td>{{ rec.status|default:"N/A" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="12" class="text-center text-muted py-5">
+                <i class="fas fa-exclamation-circle me-2"></i>No device records match your filters. Try adjusting your criteria.
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

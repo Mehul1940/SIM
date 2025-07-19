@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">{{ carrier.name }} ({{ carrier.code }})</h1>
+    
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">Support Email</dt>
+                <dd class="col-sm-9">
+                    {% if carrier.support_email %}
+                        <a href="mailto:{{ carrier.support_email }}">{{ carrier.support_email }}</a>
+                    {% else %}
+                        -
+                    {% endif %}
+                </dd>
+        
+                <dt class="col-sm-3">Support Phone</dt>
+                <dd class="col-sm-9">
+                    {% if carrier.support_phone %}
+                        <a href="tel:{{ carrier.support_phone }}">{{ carrier.support_phone }}</a>
+                    {% else %}
+                        -
+                    {% endif %}
+                </dd>
+        
+                <dt class="col-sm-3">Website</dt>
+                <dd class="col-sm-9">
+                    {% if carrier.website %}
+                        <a href="{{ carrier.website }}" target="_blank" rel="noopener noreferrer">{{ carrier.website }}</a>
+                    {% else %}
+                        -
+                    {% endif %}
+                </dd>
+        
+                <dt class="col-sm-3">Status</dt>
+                <dd class="col-sm-9">
+                    {% if carrier.is_active %}
+                        <span class="badge bg-success">Active</span>
+                    {% else %}
+                        <span class="badge bg-danger">Inactive</span>
+                    {% endif %}
+                </dd>
+        
+                <dt class="col-sm-3">Created</dt>
+                <dd class="col-sm-9">{{ carrier.created_at }}</dd>
+        
+                <dt class="col-sm-3">Last Updated</dt>
+                <dd class="col-sm-9">{{ carrier.updated_at }}</dd>
+            </dl>
+        </div>
+    </div>
+    
+    <div class="mt-4 d-flex gap-2">
+        <a href="{% url 'carrier_list' %}" class="btn btn-outline-secondary">Back to List</a>
+        <a href="{% url 'carrier_update' carrier.pk %}" class="btn btn-outline-primary"><i class="fas fa-edit me-1"></i> Edit</a>
+        <a href="{% url 'carrier_delete' carrier.pk %}" class="btn btn-outline-danger"><i class="fas fa-trash me-1"></i> Delete</a>
+    </div>
+</div>
+{% endblock %}

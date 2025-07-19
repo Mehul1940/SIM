@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<link href="{% static 'css/table.css' %}" rel="stylesheet" />
+<div class="container mt-4">
+
+  <!-- 🔍 Filter Form -->
+  <form method="get" class="row gy-2 gx-2 align-items-center mb-4">
+    <div class="col-md-4">
+      <input 
+        type="text" 
+        name="q" 
+        class="form-control" 
+        placeholder="Search by Reg No or Mobile" 
+        value="{{ request.GET.q|default_if_none:'' }}"
+      >
+    </div>
+    <div class="col-md-3">
+      <select name="status" class="form-select">
+        <option value="">All Statuses</option>
+        {% for status_value, status_label in sim_status_choices %}
+          <option value="{{ status_value }}" {% if request.GET.status == status_value %}selected{% endif %}>
+            {{ status_label }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-3">
+      <select name="sim_type" class="form-select">
+        <option value="">All Sim Types</option>
+        {% for sim_value, sim_label in sim_type_choices %}
+          <option value="{{ sim_value }}" {% if request.GET.sim_type == sim_value %}selected{% endif %}>
+            {{ sim_label }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="col-auto">
+      <button type="submit" class="btn btn-secondary">Filter</button>
+      <a href="{% url request.resolver_match.url_name %}" class="btn btn-secondary">Reset</a>
+    </div>
+  </form>
+
+  <!-- 📊 Summary Cards -->
+  <div class="row g-3 mx-5 mb-4">
+    <div class="col-md-4 col-lg-3">
+      <div class="card border-primary shadow-sm">
+        <div class="card-body">
+          <h6 class="text-muted">Total Vehicles</h6>
+          <h3 class="fw-bold">{{ total_vehicles }}</h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 col-lg-3">
+      <div class="card border-warning shadow-sm">
+        <div class="card-body">
+          <h6 class="text-muted">Device Companies</h6>
+          <h3 class="fw-bold">{{ unique_device_companies }}</h3>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+  
+
+  <!-- 📋 Table -->
+  {% if not page_obj.object_list %}
+    <div class="alert alert-info text-center">No vehicles found.</div>
+  {% else %}
+    <div class="scroll-container">
+      <table class="sim-table">
+        <thead class="table-light">
+          <tr>
+            <th><i class="fas fa-truck me-2"></i>Reg. No</th>
+            <th><i class="fas fa-mobile-alt me-2"></i>Mobile</th>
+            <th><i class="fas fa-sim-card me-2"></i>Sim_Type</th>
+            <th><i class="fas fa-signal me-2"></i>Status</th>
+            <th><i class="fas fa-user me-2"></i>Device Company</th>
+            <th><i class="fas fa-clock me-2"></i>Last Connected</th>
+            <th><i class="fas fa-fire me-2"></i>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for sim in page_obj.object_list %}
+            <tr>
+              <td>{{ sim.vehicle_reg_no }}</td>
+              <td>{{ sim.mobile_number }}</td>
+              <td>{{ sim.sim_type }}</td>
+              <td><span class="badge bg-{{ sim.status_badge|default:'info' }}">{{ sim.get_sim_status_display }}</span></td>
+              <td>{{ sim.device_company }}</td>
+              <td>
+                {% if sim.last_connected %}
+                  {{ sim.last_connected|date:"Y-m-d H:i" }}
+                {% else %}
+                  <span class="text-muted">N/A</span>
+                {% endif %}
+              </td>
+              <td>
+                <a href="{% url 'simcard_detail' sim.pk %}" class="btn btn-sm btn-outline-primary" title="View"><i class="fa fa-eye"></i></a>
+                <a href="{% url 'simcard_update' sim.pk %}" class="btn btn-sm btn-outline-secondary" title="Edit"><i class="fa fa-edit"></i></a>
+                <a href="{% url 'simcard_delete' sim.pk %}" class="btn btn-sm btn-outline-danger" title="Delete" onclick="return confirm('Delete {{ sim.vehicle_reg_no }}?');">
+                  <i class="fa fa-trash-alt"></i>
+                </a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ⏩ Pagination -->
+    {% if page_obj.has_other_pages %}
+      <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+          {% if page_obj.has_previous %}
+            <li class="page-item">
+              <a class="page-link" href="?q={{ request.GET.q }}&status={{ request.GET.status }}&page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+          {% else %}
+            <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+          {% endif %}
+
+          {% for num in page_obj.paginator.page_range %}
+            {% if num == page_obj.number %}
+              <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+            {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
+              <li class="page-item"><a class="page-link" href="?q={{ request.GET.q }}&status={{ request.GET.status }}&page={{ num }}">{{ num }}</a></li>
+            {% elif num == 1 or num == page_obj.paginator.num_pages %}
+              <li class="page-item"><a class="page-link" href="?q={{ request.GET.q }}&status={{ request.GET.status }}&page={{ num }}">{{ num }}</a></li>
+              {% if num == 1 and page_obj.number > 4 %}
+                <li class="page-item disabled"><span class="page-link">…</span></li>
+              {% elif num == page_obj.paginator.num_pages and page_obj.number < page_obj.paginator.num_pages|add:"-3" %}
+                <li class="page-item disabled"><span class="page-link">…</span></li>
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+
+          {% if page_obj.has_next %}
+            <li class="page-item">
+              <a class="page-link" href="?q={{ request.GET.q }}&status={{ request.GET.status }}&page={{ page_obj.next_page_number }}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+          {% else %}
+            <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+          {% endif %}
+        </ul>
+      </nav>
+    {% endif %}
+  {% endif %}
+</div>
+{% endblock %}

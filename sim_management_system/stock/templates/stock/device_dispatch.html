@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<link href="{% static 'css/table.css' %}" rel="stylesheet" />
+
+<div class="container py-4">
+  <div class="page-header d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="mb-1">
+        <i class="fas fa-paper-plane me-3 text-primary"></i>Device Dispatch
+      </h1>
+      <p class="text-muted page-subtitle">Record details for outgoing device dispatches</p>
+    </div>
+    <a href="{% url 'dispatch' %}" class="btn btn-outline-secondary btn-sm">
+      <i class="fas fa-list-alt me-2"></i>View All Dispatches
+    </a>
+  </div>
+
+  <div class="card shadow-lg mx-auto" style="max-width: 900px">
+    <div class="card-header bg-primary text-white text-center py-3">
+      <h5 class="mb-0"><i class="fas fa-plus-circle me-2"></i>Add New Dispatch Record</h5>
+    </div>
+    <div class="card-body p-4">
+      {% if errors %}
+      <div class="alert alert-danger">
+        <ul class="mb-0">
+          {% for error in errors %}
+            <li>{{ error|capfirst }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+      <form method="post">
+        {% csrf_token %}
+        <div class="row g-3">
+
+          <!-- Department -->
+          <div class="col-md-6">
+            <div class="form-floating mb-3">
+              <select name="location" id="location" class="form-select" required>
+                <option value="" {% if not location_id %}selected{% endif %}>-- Select Department --</option>
+                {% for dept in departments %}
+                  <option value="{{ dept.id }}" {% if location_id|stringformat:"s" == dept.id|stringformat:"s" %}selected{% endif %}>{{ dept.name }}</option>
+                {% endfor %}
+              </select>
+              <label for="location">Dispatch Device Location <span class="text-danger">*</span></label>
+            </div>
+          </div>
+
+          <!-- City -->
+          <div class="col-md-6">
+            <div class="form-floating mb-3">
+              <input type="text" name="city" id="city" class="form-control" placeholder="Enter city" value="{{ city|default:'' }}">
+              <label for="city">City</label>
+            </div>
+          </div>
+
+          <!-- Parcel Sent By -->
+          <div class="col-md-6">
+            <div class="form-floating mb-3">
+              <input type="text" name="parcel_sent_by" id="parcel_sent_by" class="form-control" placeholder="e.g., Courier Service" value="{{ parcel_sent_by|default:'' }}" />
+              <label for="parcel_sent_by">Parcel Sent By</label>
+            </div>
+          </div>
+
+          <!-- Person -->
+          <div class="col-md-6">
+            <div class="form-floating mb-3">
+              <input type="text" name="person" id="person" class="form-control" required placeholder="Enter person's name" value="{{ person|default:'' }}" />
+              <label for="person">Person <span class="text-danger">*</span></label>
+            </div>
+          </div>
+
+          <!-- Docket Number -->
+          <div class="col-md-6">
+            <div class="form-floating mb-3">
+              <input type="text" name="docket_number" id="docket_number" class="form-control" placeholder="Enter docket/tracking number" value="{{ docket_number|default:'' }}" />
+              <label for="docket_number">Docket Number</label>
+            </div>
+          </div>
+
+          <!-- Date -->
+          <div class="col-md-6">
+            <div class="form-floating mb-3">
+              <input type="date" name="date" id="date" class="form-control" value="{{ date|default:today }}" required />
+              <label for="date">Date <span class="text-danger">*</span></label>
+            </div>
+          </div>
+
+          <!-- Collected Person Name -->
+          <div class="col-md-6">
+            <div class="form-floating mb-3">
+              <input type="text" name="collected_person_name" id="collected_person_name" class="form-control" placeholder="Name of person who collected" value="{{ collected_person_name|default:'' }}" />
+              <label for="collected_person_name">Collected Person Name</label>
+            </div>
+          </div>
+
+          <!-- Status -->
+          <div class="col-md-12">
+            <div class="form-floating mb-3">
+              <select name="status" id="status" class="form-select" required>
+                <option value="" {% if not status %}selected{% endif %}>-- Select Status --</option>
+                {% for key, label in status_choices %}
+                  <option value="{{ key }}" {% if status == key %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+              </select>
+              <label for="status">Status <span class="text-danger">*</span></label>
+            </div>
+          </div>
+
+          <!-- Mobile No -->
+          <div class="col-md-12">
+            <label for="mobile_no_container" class="form-label">Mobile No <span class="text-danger">*</span></label>
+            <div id="mobile_no_container">
+              {% if mobile_no_list %}
+                {% for num in mobile_no_list %}
+                  <div class="input-group mb-2">
+                    <input type="text" name="mobile_no[]" class="form-control" value="{{ num }}" required />
+                    <button type="button" class="btn btn-outline-danger" onclick="removeInput(this)">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                {% endfor %}
+              {% else %}
+                <div class="input-group mb-2">
+                  <input type="text" name="mobile_no[]" class="form-control" placeholder="Enter mobile number" required />
+                  <button type="button" class="btn btn-outline-danger" onclick="removeInput(this)">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              {% endif %}
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-primary mt-1" onclick="addInput('mobile_no_container', 'mobile_no[]')">
+              <i class="fas fa-plus"></i> Add Mobile No
+            </button>
+          </div>
+
+          <!-- IMEI No -->
+          <div class="col-md-12">
+            <label for="imei_no_container" class="form-label">IMEI No <span class="text-danger">*</span></label>
+            <div id="imei_no_container">
+              {% if imei_no_list %}
+                {% for imei in imei_no_list %}
+                  <div class="input-group mb-2">
+                    <input type="text" name="imei_no[]" class="form-control" value="{{ imei }}" required />
+                    <button type="button" class="btn btn-outline-danger" onclick="removeInput(this)">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                {% endfor %}
+              {% else %}
+                <div class="input-group mb-2">
+                  <input type="text" name="imei_no[]" class="form-control" placeholder="Enter IMEI number" required />
+                  <button type="button" class="btn btn-outline-danger" onclick="removeInput(this)">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              {% endif %}
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-primary mt-1" onclick="addInput('imei_no_container', 'imei_no[]')">
+              <i class="fas fa-plus"></i> Add IMEI No
+            </button>
+          </div>
+
+          <!-- Serial Number -->
+          <div class="col-md-12">
+            <label for="serial_number_container" class="form-label">Serial Number <span class="text-danger">*</span></label>
+            <div id="serial_number_container">
+              {% if serial_number_list %}
+                {% for serial in serial_number_list %}
+                  <div class="input-group mb-2">
+                    <input type="text" name="serial_number[]" class="form-control" value="{{ serial }}" required />
+                    <button type="button" class="btn btn-outline-danger" onclick="removeInput(this)">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                {% endfor %}
+              {% else %}
+                <div class="input-group mb-2">
+                  <input type="text" name="serial_number[]" class="form-control" placeholder="Enter serial number" required />
+                  <button type="button" class="btn btn-outline-danger" onclick="removeInput(this)">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              {% endif %}
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-primary mt-1" onclick="addInput('serial_number_container', 'serial_number[]')">
+              <i class="fas fa-plus"></i> Add Serial Number
+            </button>
+          </div>
+
+        </div>
+
+        <div class="d-grid mt-4">
+          <button type="submit" class="btn btn-primary btn-lg">
+            <i class="fas fa-plus-circle me-2"></i>Add Dispatch
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="{% static 'js/multiple_add.js' %}"></script>
+{% endblock %}

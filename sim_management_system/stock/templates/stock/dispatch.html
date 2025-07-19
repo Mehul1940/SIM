@@ -1,0 +1,253 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<link href="{% static 'css/table.css' %}" rel="stylesheet" />
+
+<div class="container-fluid py-4">
+  <div class="page-header d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="mb-1"><i class="fas fa-truck-loading me-3 text-info"></i>Dispatch Device Records</h1>
+      <p class="text-muted page-subtitle">View and manage all outgoing device dispatches</p>
+    </div>
+    <span class="badge bg-light text-dark rounded-pill py-2 px-3">{{ dispatches|length }} Records</span>
+  </div>
+
+  <form method="get" class="card shadow-sm mb-4 p-3 filter-bar">
+    <div class="row g-3 align-items-end">
+      <div class="col-md-3">
+        <label for="search_query" class="form-label text-muted small">
+          <i class="fas fa-search me-2"></i>Search (Person/Docket/Mobile/IMEI)
+        </label>
+        <input type="text" name="search_query" id="search_query" class="form-control form-control-sm"
+          placeholder="Search person, mobile, IMEI or docket" value="{{ search_query|default:'' }}">
+      </div>
+      <div class="col-md-2">
+        <label for="department" class="form-label text-muted small">
+          <i class="fas fa-building me-2"></i>Department
+        </label>
+        <select name="department" id="department" class="form-select form-select-sm">
+          <option value="">All Departments</option>
+          {% for dept in departments %}
+          <option value="{{ dept.id }}" {% if dept.id|stringformat:"s" == selected_department|stringformat:"s" %}selected{% endif %}>
+            {{ dept.name }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-2">
+      <label for="start_date" class="form-label text-muted small">
+        <i class="fas fa-calendar-alt me-2"></i>Start Date
+      </label>
+      <input type="date" name="start_date" id="start_date" class="form-control form-control-sm"
+        value="{{ start_date|default:'' }}">
+    </div>
+
+    <div class="col-md-2">
+      <label for="end_date" class="form-label text-muted small">
+        <i class="fas fa-calendar-day me-2"></i>End Date
+      </label>
+      <input type="date" name="end_date" id="end_date" class="form-control form-control-sm"
+        value="{{ end_date|default:'' }}">
+    </div>
+      <div class="col-md-2">
+        <label for="city" class="form-label text-muted small">
+          <i class="fas fa-city me-2"></i>City
+        </label>
+        <input type="text" name="city" id="city" class="form-control form-control-sm"
+          placeholder="Enter city" value="{{ selected_city|default:'' }}">
+      </div>
+      <div class="col-md-2 col-sm-6 d-grid">
+        <button type="submit" class="btn btn-secondary btn-sm">
+          <i class="fas fa-filter me-2"></i><span class="d-none d-md-inline">Filter</span>
+        </button>
+      </div>
+      {% if search_query or selected_department or selected_city %}
+      <div class="col-md-1 col-sm-6 d-grid">
+        <a href="{% url 'dispatch' %}" class="btn btn-secondary btn-sm">
+          <i class="fas fa-times me-2"></i><span class="d-none d-md-inline">Clear</span>
+        </a>
+      </div>
+      {% endif %}
+    </div>
+  </form>
+
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-dark text-white d-flex align-items-center justify-content-between">
+      <div>
+        <i class="fas fa-list-alt me-2"></i>
+        <span>All Dispatched Devices</span>
+      </div>
+      <div class="col-md-6 text-md-end">
+        <a href="{% url 'device_dispatch' %}" class="btn btn-success">
+          <i class="fas fa-plus-circle me-2"></i>Add New Dispatch Record
+        </a>
+      </div>
+    </div>
+    <div class="card-body p-0">
+      <div class="scroll-container">
+        <table class="table sim-table">
+          <thead>
+            <tr>
+              <th><i class="fas fa-map me-1"></i>Department</th>
+              <th><i class="fas fa-city me-1"></i>City</th>
+              <th><i class="fas fa-user-circle me-1"></i>Person</th>
+              <th><i class="fas fa-mobile-alt me-1"></i>Mobile No.</th>
+              <th><i class="fas fa-fingerprint me-1"></i>IMEI No.</th>
+              <th><i class="fas fa-barcode me-1"></i>Serial No.</th>
+              <th><i class="fas fa-calendar-alt me-1"></i>Date</th>
+              <th><i class="fas fa-paper-plane me-1"></i>Parcel Sent By</th>
+              <th><i class="fas fa-file-invoice me-1"></i>Docket Number</th>
+              <th><i class="fas fa-user-check me-1"></i>Collected Person</th>
+              <th><i class="fas fa-signal me-1"></i>Status</th>
+              <th class="text-center"><i class="fas fa-fire me-1"></i>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for d in dispatches %}
+            <tr>
+              <td>{{ d.location.name }}</td>
+              <td>{{ d.city|default:"N/A" }}</td>
+              <td>{{ d.person }}</td>
+              <td>{{ d.mobile_no }}</td>
+              <td>{{ d.imei_no }}</td>
+              <td>{{ d.serial_number }}</td>
+              <td>{{ d.date|date:"d M Y" }}</td>
+              <td>{{ d.parcel_sent_by|default:"N/A" }}</td>
+              <td>{{ d.docket_number|default:"N/A" }}</td>
+              <td>{{ d.collected_person_name|default:"N/A" }}</td>
+              <td>{{ d.status|default:"N/A" }}</td>
+              <td class="text-center">
+                <div class="d-flex justify-content-center">
+                  <button class="btn btn-outline-secondary btn-sm me-2" data-bs-toggle="modal"
+                    data-bs-target="#editModal{{ d.id }}" title="Edit Record">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
+                    data-bs-target="#deleteModal{{ d.id }}" title="Delete Record">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Edit Modal -->
+            <div class="modal fade" id="editModal{{ d.id }}" tabindex="-1" aria-hidden="true">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <form method="post" action="{% url 'dispatch_edit' d.id %}">
+                    {% csrf_token %}
+                    <div class="modal-header bg-secondary text-white">
+                      <h5 class="modal-title"><i class="fas fa-edit me-2"></i>Edit Dispatch Record</h5>
+                      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                      <div class="row">
+                        <div class="col-md-6 mb-3">
+                          <label class="form-label small text-muted">Department</label>
+                          <select name="location" class="form-select form-select-sm" required>
+                            {% for dept in departments %}
+                            <option value="{{ dept.id }}" {% if d.location_id == dept.id %}selected{% endif %}>
+                              {{ dept.name }}</option>
+                            {% endfor %}
+                          </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                          <label class="form-label small text-muted">City</label>
+                          <input type="text" name="city" class="form-control form-control-sm" value="{{ d.city|default:'' }}">
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-6 mb-3">
+                          <label class="form-label small text-muted">Person</label>
+                          <input type="text" name="person" class="form-control form-control-sm" value="{{ d.person }}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                          <label class="form-label small text-muted">Mobile No.</label>
+                          <input type="text" name="mobile_no" class="form-control form-control-sm" value="{{ d.mobile_no }}" required>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-6 mb-3">
+                          <label class="form-label small text-muted">IMEI No.</label>
+                          <input type="text" name="imei_no" class="form-control form-control-sm" value="{{ d.imei_no }}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                          <label class="form-label small text-muted">Serial No.</label>
+                          <input type="text" name="serial_number" class="form-control form-control-sm" value="{{ d.serial_number }}" required>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-6 mb-3">
+                          <label class="form-label small text-muted">Date</label>
+                          <input type="date" name="date" class="form-control form-control-sm" value="{{ d.date|date:'Y-m-d' }}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                          <label class="form-label small text-muted">Parcel Sent By</label>
+                          <input type="text" name="parcel_sent_by" class="form-control form-control-sm" value="{{ d.parcel_sent_by|default:'' }}">
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-6 mb-3">
+                          <label class="form-label small text-muted">Docket Number</label>
+                          <input type="text" name="docket_number" class="form-control form-control-sm" value="{{ d.docket_number|default:'' }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                          <label class="form-label small text-muted">Collected Person Name</label>
+                          <input type="text" name="collected_person_name" class="form-control form-control-sm" value="{{ d.collected_person_name|default:'' }}">
+                        </div>
+                      </div>
+                      <div class="mb-3">
+                        <label class="form-label small text-muted">Status</label>
+                        <select name="status" class="form-select form-select-sm" required>
+                          {% for value, label in status_choices %}
+                          <option value="{{ value }}" {% if d.status == value %}selected{% endif %}>{{ label }}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                      <button type="submit" class="btn btn-secondary btn-sm">Update Record</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <!-- Delete Modal -->
+            <div class="modal fade" id="deleteModal{{ d.id }}" tabindex="-1" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <form method="post" action="{% url 'dispatch_delete' d.id %}">
+                    {% csrf_token %}
+                    <div class="modal-header bg-danger text-white">
+                      <h5 class="modal-title"><i class="fas fa-trash-alt me-2"></i>Delete Dispatch Record</h5>
+                      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                      <p>Are you sure you want to delete the dispatch record for <strong>{{ d.person }}</strong>?</p>
+                      <p class="text-danger small"><i class="fas fa-exclamation-triangle me-1"></i>This action cannot be undone.</p>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                      <button type="submit" class="btn btn-danger btn-sm">Confirm Delete</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+            {% empty %}
+            <tr>
+              <td colspan="12" class="text-center text-muted py-5">
+                <i class="fas fa-info-circle me-2"></i>No dispatch records found.
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,240 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="h-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Your Application</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --light-bg: #f8f9fa;
+            --white: #ffffff;
+            --text-color: #343a40;
+            --link-color: var(--primary-color);
+            --link-hover-color: #0056b3;
+            --shadow-medium: rgba(0, 0, 0, 0.15);
+            --shadow-light: rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            background-color: var(--light-bg);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .full-height-section {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            min-height: 100vh;
+        }
+
+        .image-section {
+            background: url('{% static "images/1.png" %}') center/cover no-repeat;
+            flex: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.15);
+            min-height: 40vh;
+        }
+
+        .image-section::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.35);
+        }
+
+        .image-content {
+            z-index: 1;
+            text-align: center;
+            padding: 2rem;
+            max-width: 800px;
+        }
+
+        .login-section {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            background-color: var(--white);
+            min-height: 100vh;
+        }
+
+        .card {
+            border: none;
+            box-shadow: 0 1rem 3rem var(--shadow-medium);
+            max-width: 450px;
+            width: 100%;
+            border-radius: 1rem;
+        }
+
+        .card-header, .card-footer {
+            background-color: var(--white);
+            text-align: center;
+            border: none;
+        }
+
+        .card-header {
+            padding-top: 2rem;
+        }
+
+        .card-header h3 {
+            color: var(--text-color);
+        }
+
+        .brand-logo {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(45deg, var(--primary-color), #00aaff);
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 2rem;
+            box-shadow: 0 0.25rem 0.75rem var(--shadow-light);
+            animation: bounceIn 0.8s ease-out;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); opacity: 1; }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); }
+        }
+
+        .form-floating {
+            margin-bottom: 1rem;
+        }
+
+        .form-control {
+            padding: 1rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border: none;
+            font-weight: 600;
+            padding: 0.75rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--link-hover-color);
+        }
+
+        .remember-forgot {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-footer p {
+            margin: 0;
+        }
+
+        .card-footer a {
+            color: var(--link-color);
+            text-decoration: none;
+        }
+
+        .card-footer a:hover {
+            color: var(--link-hover-color);
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .full-height-section {
+                flex-direction: column;
+            }
+
+            .image-section, .login-section {
+                width: 100%;
+                min-height: auto;
+            }
+
+            .card {
+                margin-top: -1rem;
+                border-radius: 1rem 1rem 0 0;
+                box-shadow: 0 -0.5rem 1.5rem var(--shadow-medium);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="full-height-section">
+        <!-- Left Image Section -->
+        <section class="image-section d-none d-md-flex" aria-hidden="true">
+            <div class="image-content">
+                <h1 class="fw-bold">Your Application</h1>
+                <p class="lead">Secure and seamless access to your account</p>
+            </div>
+        </section>
+
+        <!-- Right Login Section -->
+        <section class="login-section" role="main">
+            <div class="card">
+                <div class="card-header">
+                    <div class="brand-logo">
+                        <i class="bi bi-shield-lock"></i>
+                    </div>
+                    <h3 class="fw-bold">Welcome Back</h3>
+                    <p class="text-muted">Sign in to continue to your account.</p>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="username" name="username" placeholder="Username" required autocomplete="username">
+                            <label for="username"><i class="bi bi-person me-2"></i>Username</label>
+                        </div>
+
+                        <div class="form-floating">
+                            <input type="password" class="form-control" id="password" name="password" placeholder="Password" required autocomplete="current-password">
+                            <label for="password"><i class="bi bi-key me-2"></i>Password</label>
+                        </div>
+
+                        <div class="remember-forgot">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="rememberMe" name="rememberMe">
+                                <label class="form-check-label" for="rememberMe">Remember me</label>
+                            </div>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-box-arrow-in-right me-2"></i>Login
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer py-3">
+                    <p>Don't have an account?
+                        <a href="{% url 'register' %}" class="text-primary">Register here</a>
+                    </p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

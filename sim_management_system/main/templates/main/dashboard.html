@@ -1,0 +1,357 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="dashboard-header">
+        <h2 class="mb-3">Welcome Back, {{ user.get_full_name|default:user.username }}</h2>
+        <p class="mb-0">SIM Card Management Dashboard</p>
+    </div>
+
+    <div class="filters-section">
+        <h5 class="mb-3"><i class="fas fa-filter me-2"></i>Filters</h5>
+        <form method="GET">
+            <div class="row g-3">
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                    <label for="start_date" class="form-label">Start Date</label>
+                    <input type="date" class="form-control" id="start_date" name="start_date" value="{{ start_date }}">
+                </div>
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                    <label for="end_date" class="form-label">End Date</label>
+                    <input type="date" class="form-control" id="end_date" name="end_date" value="{{ end_date }}">
+                </div>
+                <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+                    <label for="department" class="form-label">Department</label>
+                    <select class="form-select" id="department" name="department">
+                        <option value="">All Departments</option>
+                        {% for dept in departments %}
+                            <option value="{{ dept.id }}" {% if dept.id|stringformat:"s" == selected_department %}selected{% endif %}>
+                                {{ dept.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+                    <label for="sim_type" class="form-label">SIM Type</label>
+                    <select class="form-select" id="sim_type" name="sim_type">
+                        <option value="">All SIM Types</option>
+                        {% for sim_type_option in all_sim_types %}
+                            <option value="{{ sim_type_option }}" {% if sim_type_option == selected_sim_type %}selected{% endif %}>
+                                {{ sim_type_option }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-12 col-sm-12 col-md-4 col-lg-2">
+                    <label class="form-label d-none d-lg-block">&nbsp;</label>
+                    <button type="submit" class="btn btn-gradient">
+                        <i class="fas fa-search me-2"></i>Apply Filters
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="row kpi-row">
+        <!-- Total SIM Cards -->
+        <div class="col-6 col-sm-6 col-md-4 col-lg-3 mb-3 mb-md-4">
+            <div class="card text-white h-100 kpi-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-sim-card me-1 me-sm-2"></i>Total SIM Cards</h5>
+                    <h2 class="card-text">{{ sim_card_count }}</h2>
+                    <small class="opacity-75">All registered SIMs</small>
+                </div>
+            </div>
+        </div>
+        <!-- Active SIMs -->
+        <div class="col-6 col-sm-6 col-md-4 col-lg-3 mb-3 mb-md-4">
+            <div class="card text-white h-100 kpi-card" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important;">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-check-circle me-1 me-sm-2"></i>Active SIMs</h5>
+                    <h2 class="card-text">{{ active_sim_count }}</h2>
+                    <small class="opacity-75">Currently active</small>
+                </div>
+            </div>
+        </div>
+        <!-- Deactive SIMs -->
+        <div class="col-6 col-sm-6 col-md-4 col-lg-3 mb-3 mb-md-4">
+            <div class="card text-white h-100 kpi-card" style="background: linear-gradient(135deg, #dc3545 0%, rgb(253, 67, 20) 100%) !important;">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-times-circle me-1 me-sm-2"></i>DEACTIVE SIMs</h5>
+                    <h2 class="card-text">{{ deactive_sim_count }}</h2>
+                    <small class="opacity-75">Currently Deactive</small>
+                </div>
+            </div>
+        </div>
+        <!-- Disable Sims -->
+        <div class="col-6 col-sm-6 col-md-4 col-lg-3 mb-3 mb-md-4">
+            <div class="card text-white h-100 kpi-card" style="background: linear-gradient(135deg, rgba(78, 57, 57, 0.99) 0%, rgb(110, 24, 24) 100%) !important;">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-ban me-1 me-sm-2"></i>Disable Sims</h5>
+                    <h2 class="card-text">{{ diable_sim }}</h2>
+                    <small class="opacity-75">Disable Sim</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row kpi-row">
+        <!-- Total Customers -->
+        <div class="col-6 col-sm-6 col-md-4 col-lg-3 mb-3 mb-md-4">
+            <div class="card text-white h-100 kpi-card" style="background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%) !important;">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-users me-1 me-sm-2"></i>Total Customers</h5>
+                    <h2 class="card-text">{{ customer_count }}</h2>
+                    <small class="opacity-75">Registered customers</small>
+                </div>
+            </div>
+        </div>
+        <!-- Returned Devices -->
+        <div class="col-6 col-sm-6 col-md-4 col-lg-3 mb-3 mb-md-4">
+            <div class="card text-white h-100 kpi-card" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%) !important;">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-undo me-1 me-sm-2"></i>Returned Devices</h5>
+                    <h2 class="card-text">{{ returned_devices_count }}</h2>
+                    <small class="opacity-75">In selected period</small>
+                </div>
+            </div>
+        </div>
+        <!-- Available for Dispatch -->
+        <div class="col-6 col-sm-6 col-md-4 col-lg-3 mb-3 mb-md-4">
+            <div class="card text-white h-100 kpi-card" style="background: linear-gradient(135deg, rgb(72, 119, 105) 0%, rgb(12, 99, 112) 100%) !important;">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-shipping-fast me-1 me-sm-2"></i>Available for Dispatch</h5>
+                    <h2 class="card-text">{{ dispatched_devices_count }}</h2>
+                    <small class="opacity-75">Ready to dispatch</small>
+                </div>
+            </div>
+        </div>
+        <!-- Inventory Items -->
+        <div class="col-6 col-sm-6 col-md-4 col-lg-3 mb-3 mb-md-4">
+            <div class="card text-white h-100 kpi-card" style="background: linear-gradient(135deg, #343a40 0%, rgb(0, 0, 0) 100%) !important;">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-boxes me-1 me-sm-2"></i>Inventory Items</h5>
+                    <h2 class="card-text">{{ inventory_items_count }}</h2>
+                    <small class="opacity-75">Total in stock</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- First grid: 3 charts side by side -->
+    <div class="row">
+        <!-- SIM Status Distribution -->
+        <div class="col-12 col-lg-4 mb-4">
+            <div class="chart-card">
+                <div class="chart-title"><i class="fas fa-chart-pie me-2"></i>SIM Status Distribution</div>
+                <div class="chart-container">
+                    <canvas id="simStatusChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <!-- SIM Type Breakdown -->
+        <div class="col-12 col-lg-4 mb-4">
+            <div class="chart-card">
+                <div class="chart-title"><i class="fas fa-chart-pie me-2"></i>SIM Type Breakdown</div>
+                <div class="chart-container">
+                    <canvas id="simTypeChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <!-- SIMs by Department -->
+        <div class="col-12 col-lg-4 mb-4">
+            <div class="chart-card">
+                <div class="chart-title"><i class="fas fa-chart-bar me-2"></i>SIMs by Department</div>
+                <div class="chart-container">
+                    <canvas id="simsDepartmentChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Separate grid for Monthly Device Activity (1x1) -->
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="chart-card large-chart">
+                <div class="chart-title"><i class="fas fa-chart-line me-2"></i>Monthly Device Activity</div>
+                <div class="chart-container">
+                    <canvas id="deviceActivityChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+<script>
+    // Chart configuration
+    Chart.defaults.font.family = "'Inter', -apple-system, BlinkMacSystemFont, sans-serif";
+    Chart.defaults.color = '#666';
+
+    const chartColors = {
+        primary: '#0d6efd',
+        success: '#198754',
+        info: '#0dcaf0',
+        warning: '#ffc107',
+        danger: '#dc3545',
+        secondary: '#6c757d',
+        gradient: ['#0d6efd', '#198754', '#0dcaf0', '#ffc107', '#dc3545', '#6c757d', '#fd7e14', '#6f42c1']
+    };
+
+    const getResponsiveOptions = (chartType) => {
+        const isMobile = window.innerWidth < 768;
+        const baseOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: isMobile ? 15 : 20,
+                        usePointStyle: true,
+                        font: {
+                            size: isMobile ? 10 : 12
+                        }
+                    }
+                }
+            }
+        };
+
+        if (chartType === 'bar') {
+            baseOptions.scales = {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(0,0,0,0.1)' },
+                    ticks: { font: { size: isMobile ? 10 : 12 } }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { font: { size: isMobile ? 10 : 12 }, maxRotation: isMobile ? 45 : 0 }
+                }
+            };
+        } else if (chartType === 'line') {
+            baseOptions.interaction = { intersect: false, mode: 'index' };
+            baseOptions.scales = {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(0,0,0,0.1)' },
+                    ticks: { font: { size: isMobile ? 10 : 12 } }
+                },
+                x: {
+                    grid: { color: 'rgba(0,0,0,0.1)' },
+                    ticks: { font: { size: isMobile ? 10 : 12 }, maxRotation: isMobile ? 45 : 0 }
+                }
+            };
+        }
+        return baseOptions;
+    };
+
+    // SIM Status Chart
+    const simStatusData = {{ sim_status_data|safe }};
+    if (simStatusData && simStatusData.labels && simStatusData.labels.length > 0) {
+        const ctx1 = document.getElementById('simStatusChart').getContext('2d');
+        new Chart(ctx1, {
+            type: 'doughnut',
+            data: {
+                labels: simStatusData.labels,
+                datasets: [{
+                    data: simStatusData.data,
+                    backgroundColor: chartColors.gradient.slice(0, simStatusData.labels.length),
+                    borderWidth: 3,
+                    borderColor: '#fff'
+                }]
+            },
+            options: getResponsiveOptions('doughnut')
+        });
+    }
+
+    // SIM Type Chart
+    const simTypeData = {{ sim_type_data|safe }};
+    if (simTypeData && simTypeData.labels && simTypeData.labels.length > 0) {
+        const ctx2 = document.getElementById('simTypeChart').getContext('2d');
+        new Chart(ctx2, {
+            type: 'pie',
+            data: {
+                labels: simTypeData.labels,
+                datasets: [{
+                    data: simTypeData.data,
+                    backgroundColor: chartColors.gradient.slice(0, simTypeData.labels.length),
+                    borderWidth: 3,
+                    borderColor: '#fff'
+                }]
+            },
+            options: getResponsiveOptions('pie')
+        });
+    }
+
+    // SIMs by Department Chart
+    const simsDepartmentData = {{ sims_by_department_data|safe }};
+    if (simsDepartmentData && simsDepartmentData.labels && simsDepartmentData.labels.length > 0) {
+        const ctx3 = document.getElementById('simsDepartmentChart').getContext('2d');
+        new Chart(ctx3, {
+            type: 'bar',
+            data: {
+                labels: simsDepartmentData.labels,
+                datasets: [{
+                    label: 'SIM Cards',
+                    data: simsDepartmentData.data,
+                    backgroundColor: chartColors.primary,
+                    borderColor: chartColors.primary,
+                    borderWidth: 1,
+                    borderRadius: 4,
+                    borderSkipped: false,
+                }]
+            },
+            options: {
+                ...getResponsiveOptions('bar'),
+                plugins: { legend: { display: false } }
+            }
+        });
+    }
+
+    // Monthly Device Activity Chart
+    const deviceActivityData = {{ device_activity_data|safe }};
+    if (deviceActivityData && deviceActivityData.labels && deviceActivityData.labels.length > 0) {
+        const ctx5 = document.getElementById('deviceActivityChart').getContext('2d');
+        new Chart(ctx5, {
+            type: 'line',
+            data: {
+                labels: deviceActivityData.labels,
+                datasets: [{
+                    label: 'Dispatched',
+                    data: deviceActivityData.dispatch_data,
+                    borderColor: chartColors.primary,
+                    backgroundColor: chartColors.primary + '20',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: chartColors.primary,
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: window.innerWidth < 768 ? 3 : 5
+                }, {
+                    label: 'Returned',
+                    data: deviceActivityData.return_data,
+                    borderColor: chartColors.danger,
+                    backgroundColor: chartColors.danger + '20',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: chartColors.danger,
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: window.innerWidth < 768 ? 3 : 5
+                }]
+            },
+            options: getResponsiveOptions('line')
+        });
+    }
+
+    // Handle window resize to update charts
+    window.addEventListener('resize', function() {
+        if (window.Chart && window.Chart.instances) {
+            window.Chart.instances.forEach(chart => chart.resize());
+        }
+    });
+</script>
+{% endblock %}

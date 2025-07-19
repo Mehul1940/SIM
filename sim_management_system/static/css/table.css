@@ -1,0 +1,609 @@
+ :root {
+     --success-color: #059669;
+     --danger-color: #dc2626;
+     --warning-color: #d97706;
+     --info-color: #0891b2;
+     --light-bg: #f8f8fc;
+     --dark-text: #1e293b;
+     --muted-text: #64748b;
+     --border-color: #e2e8f0;
+     --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+     --card-hover-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+ }
+
+ /* Enhanced Filter Bar */
+ .filter-bar {
+     background: white;
+     padding: 2rem;
+     border-radius: 16px;
+     box-shadow: var(--card-shadow);
+     margin-bottom: 2rem;
+     border: 1px solid var(--border-color);
+     transition: box-shadow 0.3s ease;
+ }
+
+ .filter-bar:hover {
+     box-shadow: var(--card-hover-shadow);
+ }
+
+ .filter-row {
+     display: grid;
+     grid-template-columns: 2fr 1fr 1fr auto auto;
+     gap: 1.5rem;
+     align-items: end;
+ }
+
+ .form-group {
+     display: flex;
+     flex-direction: column;
+ }
+
+ .form-label {
+     font-weight: 600;
+     color: var(--dark-text);
+     margin-bottom: 0.5rem;
+     font-size: 0.875rem;
+ }
+
+ .form-control,
+ .form-select {
+     padding: 0.75rem 1rem;
+     border: 2px solid var(--border-color);
+     border-radius: 8px;
+     font-size: 0.9rem;
+     transition: all 0.3s ease;
+     background-color: white;
+ }
+
+ .form-control:focus,
+ .form-select:focus {
+     border-color: var(--primary-color);
+     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+     outline: none;
+ }
+
+ .search-input {
+     position: relative;
+ }
+
+ .search-input::before {
+     content: '🔍';
+     position: absolute;
+     left: 1rem;
+     top: 50%;
+     transform: translateY(-50%);
+     color: var(--muted-text);
+     pointer-events: none;
+     z-index: 1;
+ }
+
+ .search-input input {
+     padding-left: 2.5rem;
+ }
+
+ .btn-primary {
+     background: linear-gradient(135deg, var(--primary-color), #3b82f6);
+     border: none;
+     padding: 0.75rem 1.5rem;
+     border-radius: 8px;
+     font-weight: 600;
+     transition: all 0.3s ease;
+     white-space: nowrap;
+ }
+
+ .btn-primary:hover {
+     transform: translateY(-2px);
+     box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+ }
+
+ .btn-secondary {
+     background: #6b7280;
+     border: none;
+     padding: 0.75rem 1.5rem;
+     border-radius: 8px;
+     font-weight: 600;
+     transition: all 0.3s ease;
+     color: white;
+     text-decoration: none;
+     display: inline-flex;
+     align-items: center;
+     white-space: nowrap;
+ }
+
+ .btn-secondary:hover {
+     background: #4b5563;
+     transform: translateY(-2px);
+     color: white;
+ }
+
+ /* Department Container */
+ .department-container {
+     background: white;
+     margin-bottom: 2rem;
+     border-radius: 16px;
+     box-shadow: var(--card-shadow);
+     overflow: hidden;
+     border: 1px solid var(--border-color);
+     transition: all 0.3s ease;
+ }
+
+ .department-container:hover {
+     box-shadow: var(--card-hover-shadow);
+     transform: translateY(-2px);
+ }
+
+ .department-header {
+     background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+     padding: 1.5rem 2rem;
+     border-bottom: 1px solid var(--border-color);
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     position: relative;
+ }
+
+ .department-header::after {
+     content: '';
+     position: absolute;
+     bottom: 0;
+     left: 2rem;
+     right: 2rem;
+     height: 2px;
+     background: linear-gradient(90deg, var(--primary-color), transparent);
+ }
+
+ .department-header h2 {
+     margin: 0;
+     color: var(--dark-text);
+     font-weight: 600;
+     font-size: 1.5rem;
+ }
+
+ .sim-count {
+     background: rgba(37, 99, 235, 0.1);
+     color: var(--primary-color);
+     padding: 0.5rem 1rem;
+     border-radius: 20px;
+     font-weight: 600;
+     font-size: 0.875rem;
+ }
+
+ /* Enhanced Table Styles */
+ .scroll-container {
+     overflow-x: auto;
+     max-height: 70vh;
+     border-radius: 0 0 16px 16px;
+ }
+
+ .sim-table {
+     width: 100%;
+     border-collapse: collapse;
+     font-size: 0.9rem;
+     min-width: 800px;
+ }
+
+ .sim-table th {
+     background: linear-gradient(135deg, #f8f8fc, #f1f5f9);
+     position: sticky;
+     top: 0;
+     padding: 1rem;
+     text-align: left;
+     font-weight: 600;
+     color: var(--dark-text);
+     border-bottom: 2px solid var(--border-color);
+     white-space: nowrap;
+     z-index: 10;
+ }
+
+ .sim-table td {
+     padding: 1rem;
+     border-bottom: 1px solid #f1f5f9;
+     vertical-align: middle;
+ }
+
+ .sim-table tbody tr {
+     transition: all 0.2s ease;
+ }
+
+ .sim-table tbody tr:hover {
+     background: linear-gradient(90deg, #f8fafc, #ffffff);
+     transform: scale(1.005);
+ }
+
+ /* Vehicle Info Styling */
+ .vehicle-info {
+     display: flex;
+     flex-direction: column;
+     gap: 0.25rem;
+ }
+
+ .vehicle-reg {
+     font-weight: 600;
+     color: var(--dark-text);
+ }
+
+ .transporter-name {
+     font-size: 0.8rem;
+     color: var(--muted-text);
+     font-style: italic;
+ }
+
+ /* Enhanced Status Badges */
+ .status-badge {
+     display: inline-flex;
+     align-items: center;
+     gap: 0.375rem;
+     padding: 0.5rem 0.75rem;
+     border-radius: 20px;
+     font-size: 0.8rem;
+     font-weight: 600;
+     white-space: nowrap;
+ }
+
+ .status-active {
+     background: rgba(5, 150, 105, 0.1);
+     color: var(--success-color);
+     border: 1px solid rgba(5, 150, 105, 0.2);
+ }
+
+ .status-inactive {
+     background: rgba(220, 38, 38, 0.1);
+     color: var(--danger-color);
+     border: 1px solid rgba(220, 38, 38, 0.2);
+ }
+
+ .status-badge::before {
+     content: '';
+     width: 8px;
+     height: 8px;
+     border-radius: 50%;
+     background: currentColor;
+ }
+
+ /* Data Styling */
+ .mobile-number {
+     font-family: 'Monaco', 'Consolas', monospace;
+     font-weight: 500;
+     color: var(--dark-text);
+     background: #f8fafc;
+     padding: 0.25rem 0.5rem;
+     border-radius: 4px;
+ }
+
+ .imei-display {
+     font-family: 'Monaco', 'Consolas', monospace;
+     font-size: 0.85rem;
+     color: var(--muted-text);
+     background: #f8fafc;
+     padding: 0.25rem 0.5rem;
+     border-radius: 4px;
+ }
+
+ .device-info {
+     background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+     color: #3730a3;
+     padding: 0.375rem 0.75rem;
+     border-radius: 6px;
+     font-size: 0.8rem;
+     font-weight: 500;
+ }
+
+ .sim-type-badge {
+     background: linear-gradient(135deg, #fef3c7, #fde68a);
+     color: #92400e;
+     padding: 0.375rem 0.75rem;
+     border-radius: 6px;
+     font-size: 0.8rem;
+     font-weight: 500;
+ }
+
+ /* Last Activity Styling */
+ .last-activity {
+     display: flex;
+     flex-direction: column;
+     gap: 0.25rem;
+ }
+
+ .activity-date {
+     font-weight: 500;
+     color: var(--dark-text);
+ }
+
+ .activity-time {
+     font-size: 0.8rem;
+     color: var(--muted-text);
+ }
+
+ /* Enhanced Action Buttons */
+ .action-cell {
+     white-space: nowrap;
+ }
+
+
+ /* No SIMs State */
+ .no-sims {
+     padding: 3rem 2rem;
+     text-align: center;
+     color: var(--muted-text);
+ }
+
+ .no-sims i {
+     font-size: 4rem;
+     color: #cbd5e1;
+     margin-bottom: 1rem;
+ }
+
+ .no-sims h4 {
+     color: var(--dark-text);
+     margin-bottom: 0.5rem;
+ }
+
+ /* Alert Styling */
+ .alert-info {
+     background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+     border: 1px solid #93c5fd;
+     color: #1e40af;
+     padding: 1.5rem;
+     border-radius: 12px;
+     font-weight: 500;
+ }
+
+ /* Responsive Design */
+ @media (max-width: 1024px) {
+     .filter-row {
+         grid-template-columns: 1fr;
+         gap: 1rem;
+     }
+
+     .filter-row .form-group {
+         margin-bottom: 0;
+     }
+
+     .btn-primary,
+     .btn-secondary {
+         justify-self: start;
+         width: fit-content;
+     }
+ }
+
+ @media (max-width: 768px) {
+     .page-header {
+         padding: 2rem 1.5rem;
+     }
+
+     .page-header h1 {
+         font-size: 2rem;
+     }
+
+     .filter-bar {
+         padding: 1.5rem;
+     }
+
+     .department-header {
+         padding: 1rem 1.5rem;
+         flex-direction: column;
+         align-items: flex-start;
+         gap: 0.5rem;
+     }
+
+     .department-header h2 {
+         font-size: 1.25rem;
+     }
+
+     .sim-table {
+         font-size: 0.8rem;
+         min-width: 600px;
+     }
+
+     .sim-table th,
+     .sim-table td {
+         padding: 0.75rem 0.5rem;
+     }
+
+     .mobile-number,
+     .imei-display {
+         font-size: 0.75rem;
+     }
+ }
+
+ /* Loading Animation */
+ @keyframes fadeInUp {
+     from {
+         opacity: 0;
+         transform: translateY(20px);
+     }
+
+     to {
+         opacity: 1;
+         transform: translateY(0);
+     }
+ }
+
+ .department-container {
+     animation: fadeInUp 0.6s ease-out;
+ }
+
+ .department-container:nth-child(2) {
+     animation-delay: 0.1s;
+ }
+
+ .department-container:nth-child(3) {
+     animation-delay: 0.2s;
+ }
+
+ .department-container:nth-child(4) {
+     animation-delay: 0.3s;
+ }
+
+ .page-header {
+     background-color: #ffffff;
+     padding: 1.5rem 2rem;
+     border-radius: 0.5rem;
+     box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+     margin-bottom: 1.5rem;
+ }
+
+ .page-header h1 {
+     font-size: 2rem;
+     color: #343a40;
+     margin-bottom: 0.5rem;
+ }
+
+ .page-subtitle {
+     font-size: 0.9rem;
+     color: #6c757d;
+ }
+
+ /* Table Card Styling */
+ .card-header.bg-dark {
+     background-color: #343a40 !important;
+     /* Ensure dark background */
+     color: #fff;
+     font-size: 1.1rem;
+     font-weight: 600;
+     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+     padding: 1rem 1.5rem;
+ }
+
+ .card-header .badge {
+     font-size: 0.85rem;
+     padding: 0.5em 0.8em;
+     border-radius: 1rem;
+     /* Pill shape */
+ }
+
+ .table-responsive {
+     border-radius: 0 0 0.5rem 0.5rem;
+     /* Only bottom rounded corners */
+     overflow: hidden;
+     /* Ensures content respects rounded corners */
+ }
+
+ .table-hover tbody tr:hover {
+     background-color: #e2f0fe;
+     /* Light blue on hover */
+ }
+
+ .table-striped tbody tr:nth-of-type(odd) {
+     background-color: rgba(0, 0, 0, 0.02);
+     /* Very subtle stripe */
+ }
+
+ /* Table Headings */
+ .table th {
+     background-color: #f2f2f2;
+     /* Light grey header background */
+     color: #495057;
+     font-weight: 600;
+     padding: 1rem 1.5rem;
+     /* Consistent padding */
+     vertical-align: middle;
+ }
+
+ /* Table Data Cells */
+ .table td {
+     padding: 0.75rem 1.5rem;
+     /* Consistent padding */
+     vertical-align: middle;
+ }
+
+ .table-sim .badge {
+     /* Specific styling for badges in table cells */
+     font-size: 0.75rem;
+     padding: 0.35em 0.65em;
+     font-weight: 500;
+     min-width: 70px;
+     /* Give badges a consistent minimum width */
+     text-align: center;
+ }
+
+ /* Empty State Message */
+ .table tbody tr td[colspan="7"] {
+     color: #6c757d;
+     font-style: italic;
+ }
+
+ /* Base status badge style (modern soft style) */
+ .status-badge {
+     padding: 4px 12px;
+     border-radius: 999px;
+     /* pill shape */
+     font-weight: 600;
+     font-size: 0.85rem;
+     display: inline-block;
+     background-color: #eaeaea;
+     color: #333;
+ }
+
+ /* Soft background and text color for each status */
+ .status-available {
+     background-color: #d4edda;
+     /* light green */
+     color: #155724;
+ }
+
+ .status-disable {
+     background-color: #e2e3e5;
+     /* light gray */
+     color: #383d41;
+ }
+
+ .status-active {
+     background-color: #cce5ff;
+     /* light blue */
+     color: #004085;
+ }
+
+ .status-deactive {
+     background-color: #f8d7da;
+     /* light red */
+     color: #721c24;
+ }
+
+ .status-idle {
+     background-color: #fff3cd;
+     /* light yellow */
+     color: #856404;
+ }
+
+ .status-repair {
+     background-color: #d1ecf1;
+     /* light cyan */
+     color: #0c5460;
+ }
+
+ .status-comm-lost {
+     background-color: #d6d8d9;
+     /* soft dark gray */
+     color: #1b1e21;
+ }
+
+ .status-gps-missing {
+     background-color: #ffe5b4;
+     /* soft orange */
+     color: #8a4b00;
+ }
+
+ .status-temp-withdraw {
+     background-color: #e2e3f3;
+     /* soft indigo */
+     color: #383d7c;
+ }
+
+ .status-accident {
+     background-color: #f8d7e9;
+     /* soft pink */
+     color: #842029;
+ }
+
+ .status-scrap {
+     background-color: #e0cfc2;
+     /* soft brown */
+     color: #4e342e;
+ }
+
+ .status-unknown {
+     background-color: #e2e3e5;
+     /* soft light gray */
+     color: #495057;
+ }

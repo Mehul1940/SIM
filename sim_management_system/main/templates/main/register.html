@@ -1,0 +1,433 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="h-100">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register | Your Application</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary-color: #007bff;
+        --secondary-color: #6c757d;
+        --light-bg: #f8f9fa;
+        --white: #ffffff;
+        --text-color: #343a40;
+        --link-color: var(--primary-color);
+        --link-hover-color: #0056b3;
+        --shadow-medium: rgba(0, 0, 0, 0.15);
+        --shadow-light: rgba(0, 0, 0, 0.1);
+      }
+
+      body {
+        background-color: var(--light-bg);
+        min-height: 100vh;
+        font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .split-section {
+        flex: 1;
+        display: flex;
+        min-height: 100vh;
+      }
+
+      .image-section {
+        background: url('{% static "images/1.png" %}') center/cover no-repeat;
+        flex: 1;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--white);
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.15);
+      }
+
+      .image-section::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.35);
+      }
+
+      .image-content {
+        z-index: 1;
+        text-align: center;
+        padding: 2rem;
+        max-width: 800px;
+      }
+
+      .form-section {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: clamp(1rem, 3vw, 3rem);
+        min-height: 100vh;
+      }
+
+      .registration-card {
+        border: none;
+        box-shadow: 0 1rem 3rem var(--shadow-medium);
+        width: 100%;
+        max-width: clamp(300px, 90%, 500px);
+        overflow: hidden;
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        background-color: var(--white);
+        margin: 0 auto;
+      }
+
+      .registration-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 1.5rem 4rem var(--shadow-medium);
+      }
+
+      .card-header {
+        background-color: var(--white);
+        border-bottom: none;
+        padding: clamp(1.5rem, 4vw, 2.5rem);
+        text-align: center;
+      }
+
+      .card-header h2 {
+        color: var(--text-color);
+        margin-bottom: 0;
+        font-size: clamp(1.5rem, 2.5vw, 2rem);
+        font-weight: 600;
+      }
+
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .form-label {
+        font-weight: 500;
+        color: var(--text-color);
+        margin-bottom: 0.5rem;
+      }
+
+      .form-control {
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
+        border: 1px solid #dee2e6;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+      }
+
+      .password-toggle {
+        position: relative;
+      }
+
+      .password-toggle-icon {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: var(--secondary-color);
+      }
+
+      .btn-register {
+        background-color: var(--primary-color);
+        color: var(--white);
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        border-radius: 0.5rem;
+        transition: all 0.3s ease;
+        width: 100%;
+      }
+
+      .btn-register:hover {
+        background-color: var(--link-hover-color);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+      }
+
+      .login-link {
+        text-align: center;
+        margin-top: 1.5rem;
+        color: var(--secondary-color);
+      }
+
+      .login-link a {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 500;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 991.98px) {
+        .split-section {
+          flex-direction: column;
+        }
+
+        .image-section {
+          min-height: 40vh;
+          flex: none;
+        }
+
+        .form-section {
+          min-height: auto;
+          padding: 2rem 1rem;
+        }
+
+        .registration-card {
+          margin-top: -4rem;
+          border-radius: 1rem;
+        }
+      }
+
+      @media (max-width: 575.98px) {
+        .card-header {
+          padding: 1.5rem 1rem;
+        }
+
+        .form-control {
+          padding: 0.65rem 0.9rem;
+        }
+
+        .btn-register {
+          padding: 0.65rem 1rem;
+        }
+      }
+
+      @media (max-width: 375px) {
+        .image-section {
+          min-height: 30vh;
+        }
+
+        .registration-card {
+          margin-top: -2rem;
+        }
+      }
+      .input-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--secondary-color);
+        z-index: 3;
+      }
+
+      .icon-input {
+        padding-left: 2.5rem !important;
+      }
+
+      .phone-input {
+        padding-left: 3.5rem !important;
+      }
+
+      @media (max-width: 575.98px) {
+        .input-icon {
+          left: 0.75rem;
+          font-size: 0.9rem;
+        }
+
+        .icon-input {
+          padding-left: 2.25rem !important;
+        }
+
+        .phone-input {
+          padding-left: 3.25rem !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="split-section">
+      <!-- Left Image Section -->
+      <div class="image-section d-none d-md-flex">
+        <div class="image-content">
+          <h1 class="display-4 fw-bold mb-3">Your Application</h1>
+          <p class="lead">Join our growing community</p>
+        </div>
+      </div>
+
+      <!-- Right Form Section -->
+      <div class="form-section">
+        <div class="registration-card">
+          <div class="card-header">
+            <h2><i class="bi bi-person-plus me-2"></i>Create Account</h2>
+          </div>
+          <div class="card-body p-4">
+            <!-- Messages block remains the same -->
+
+            <form method="POST" class="needs-validation" novalidate>
+              {% csrf_token %}
+
+              <!-- Username -->
+              <div class="form-group position-relative">
+                <label class="form-label">Username *</label>
+                <i class="bi bi-person input-icon mt-3"></i>
+                <input
+                  type="text"
+                  name="username"
+                  class="form-control icon-input"
+                  required
+                />
+              </div>
+
+              <!-- Email -->
+              <div class="form-group position-relative">
+                <label class="form-label">Email Address *</label>
+                <i class="bi bi-envelope input-icon mt-3"></i>
+                <input
+                  type="email"
+                  name="email"
+                  class="form-control icon-input"
+                  required
+                />
+              </div>
+
+              <!-- Name Fields -->
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group position-relative">
+                    <label class="form-label">First Name</label>
+                    <i class="bi bi-person-badge input-icon mt-3"></i>
+                    <input
+                      type="text"
+                      name="first_name"
+                      class="form-control icon-input"
+                    />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group position-relative">
+                    <label class="form-label">Last Name</label>
+                    <i class="bi bi-person-badge input-icon mt-3"></i>
+                    <input
+                      type="text"
+                      name="last_name"
+                      class="form-control icon-input"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Phone -->
+              <div class="form-group position-relative">
+                <label class="form-label">Phone Number *</label>
+                <div class="d-flex align-items-center">
+                  <i class="bi bi-telephone input-icon mt-2"></i>
+                 
+                  
+                  <input
+                    type="tel"
+                    name="phone"
+                    class="form-control phone-input"
+                    pattern="[0-9]{10}"
+                    placeholder="1234567890"
+                    required
+                  />
+                </div>
+                <small class="form-text text-muted"
+                  >10 digits without spaces or dashes</small
+                >
+              </div>
+
+              <!-- Address -->
+              <div class="form-group position-relative">
+                <label class="form-label">Address *</label>
+                <i class="bi bi-house-door input-icon mt-3"></i>
+                <textarea
+                  name="address"
+                  class="form-control icon-input"
+                  rows="3"
+                  required
+                ></textarea>
+              </div>
+
+              <!-- Password Fields -->
+              <div class="form-group password-toggle position-relative">
+                <label class="form-label">Password *</label>
+                <i class="bi bi-lock input-icon mt-3"></i>
+                <input
+                  type="password"
+                  name="password1"
+                  class="form-control icon-input"
+                  required
+                />
+                <i class="bi bi-eye-slash password-toggle-icon mt-3"></i>
+              </div>
+
+              <div class="form-group password-toggle position-relative">
+                <label class="form-label">Confirm Password *</label>
+                <i class="bi bi-lock input-icon mt-3"></i>
+                <input
+                  type="password"
+                  name="password2"
+                  class="form-control icon-input"
+                  required
+                />
+                <i class="bi bi-eye-slash password-toggle-icon mt-3"></i>
+              </div>
+
+              <button type="submit" class="btn btn-register mt-3">
+                <i class="bi bi-person-check me-2"></i>Create Account
+              </button>
+            </form>
+
+            <div class="login-link mt-4">
+              <i class="bi bi-arrow-left-circle me-2"></i>Already have an
+              account?
+              <a href="{% url 'login' %}">Sign in here</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+      // Password toggle functionality
+      document.querySelectorAll(".password-toggle-icon").forEach((icon) => {
+        icon.addEventListener("click", function () {
+          const input = this.previousElementSibling;
+          const type =
+            input.getAttribute("type") === "password" ? "text" : "password";
+          input.setAttribute("type", type);
+          this.classList.toggle("bi-eye");
+          this.classList.toggle("bi-eye-slash");
+        });
+      });
+
+      // Form validation
+      (() => {
+        "use strict";
+        const forms = document.querySelectorAll(".needs-validation");
+
+        Array.from(forms).forEach((form) => {
+          form.addEventListener(
+            "submit",
+            (event) => {
+              if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+              }
+              form.classList.add("was-validated");
+            },
+            false
+          );
+        });
+      })();
+    </script>
+  </body>
+</html>

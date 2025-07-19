@@ -1,0 +1,258 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-4">
+  <div class="card shadow-sm">
+    <div class="card-header bg-primary text-white">
+      <h4 class="mb-0">{% if simcard %}Edit SIM Card{% else %}Add SIM Card{% endif %}</h4>
+    </div>
+    
+    <div class="card-body">
+      <form method="post" class="needs-validation" novalidate>
+        {% csrf_token %}
+        
+        <div class="row">
+          <!-- Primary Information Section -->
+          <div class="col-12 mb-4">
+            <div class="card border-0 shadow-sm">
+              <div class="card-header bg-light">
+                <h5 class="card-title mb-0">Primary Information</h5>
+              </div>
+              <div class="card-body">
+                <div class="row g-3">
+                  <div class="col-md-4">
+                    <label for="mobile_number" class="form-label">Mobile Number <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="bi bi-phone"></i></span>
+                      <input type="text" name="mobile_number" id="mobile_number" class="form-control" value="{{ simcard.mobile_number }}" required>
+                    </div>
+                    <div class="invalid-feedback">Please enter a mobile number</div>
+                  </div>
+                  
+                  <div class="col-md-4">
+                    <label for="iccid_number" class="form-label">SIM Number (ICCID) <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="bi bi-sim"></i></span>
+                      <input type="text" name="iccid_number" id="iccid_number" class="form-control" value="{{ simcard.iccid_number }}" required>
+                    </div>
+                    <div class="invalid-feedback">Please enter a SIM number</div>
+                  </div>
+                  
+                  <div class="col-md-4">
+                    <label for="imsi_number" class="form-label">IMSI Number</label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="bi bi-upc"></i></span>
+                      <input type="text" name="imsi_number" id="imsi_number" class="form-control" value="{{ simcard.imsi_number }}">
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-6">
+                    <label for="basket_name" class="form-label">Basket Name</label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="bi bi-basket"></i></span>
+                      <input type="text" name="basket_name" id="basket_name" class="form-control" value="{{ simcard.basket_name }}">
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-6">
+                    <label for="sim_status" class="form-label">SIM Status <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="bi bi-toggle-on"></i></span>
+                      <select name="sim_status" id="sim_status" class="form-select" required>
+                        {% for choice in sim_status_choices %}
+                          <option value="{{ choice.0 }}" {% if simcard.sim_status == choice.0 %}selected{% endif %}>{{ choice.1 }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                    <div class="invalid-feedback">Please select a status</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Plan Details Section -->
+          <div class="col-12 mb-4">
+            <div class="card border-0 shadow-sm">
+              <div class="card-header bg-light">
+                <h5 class="card-title mb-0">Plan Details</h5>
+              </div>
+              <div class="card-body">
+                <div class="row g-3">
+                  <div class="col-md-4">
+                    <label for="plan_name" class="form-label">Plan Name</label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="bi bi-card-list"></i></span>
+                      <input type="text" name="plan_name" id="plan_name" class="form-control" value="{{ simcard.plan_name }}">
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-4">
+                    <label for="plan_type" class="form-label">Plan Type <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="bi bi-tag"></i></span>
+                      <select name="plan_type" id="plan_type" class="form-select" required>
+                        {% for choice in plan_type_choices %}
+                          <option value="{{ choice.0 }}" {% if simcard.plan_type == choice.0 %}selected{% endif %}>{{ choice.1 }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                    <div class="invalid-feedback">Please select a plan type</div>
+                  </div>
+                  
+                  <div class="col-md-4">
+                    <label for="sim_type" class="form-label">SIM Type <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="bi bi-cpu"></i></span>
+                      <select name="sim_type" id="sim_type" class="form-select" required>
+                        {% for choice in sim_type_choices %}
+                          <option value="{{ choice.0 }}" {% if simcard.sim_type == choice.0 %}selected{% endif %}>{{ choice.1 }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                    <div class="invalid-feedback">Please select a SIM type</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Additional Information Section -->
+          <div class="col-md-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+              <div class="card-header bg-light">
+                <h5 class="card-title mb-0">Additional Info</h5>
+              </div>
+              <div class="card-body">
+                <div class="mb-3">
+                  <label for="imei_number" class="form-label">IMEI Number</label>
+                  <input type="text" name="imei_number" id="imei_number" class="form-control" value="{{ simcard.imei_number }}">
+                </div>
+                
+                <div class="mb-3">
+                  <label for="current_ip" class="form-label">Current IP</label>
+                  <input type="text" name="current_ip" id="current_ip" class="form-control" value="{{ simcard.current_ip }}">
+                </div>
+                
+                <div class="mb-3">
+                  <label for="last_connected" class="form-label">Last Connected</label>
+                  <input type="datetime-local" name="last_connected" id="last_connected" class="form-control" value="{{ simcard.last_connected|date:'Y-m-d\\TH:i' }}">
+                </div>
+                <div class="mb-3">
+                  <label for="carrier" class="form-label">Carrier</label>
+                  <select name="carrier" id="carrier" class="form-select">
+                    <option value="" {% if not simcard.carrier %}selected{% endif %}>---------</option>
+                    {% for carrier in carriers %}
+                      <option value="{{ carrier.id }}" {% if simcard.carrier and simcard.carrier.id == carrier.id %}selected{% endif %}>{{ carrier.name }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+
+                <div class="mb-3">
+                  <label for="vehicle_reg_no" class="form-label">Vehicle Registration Number</label>
+                  <input type="text" name="vehicle_reg_no" id="vehicle_reg_no" class="form-control" value="{{ simcard.vehicle_reg_no }}">
+                </div>
+                
+                <div class="mb-3">
+                  <label for="transporter_name" class="form-label">Transporter Name</label>
+                  <input type="text" name="transporter_name" id="transporter_name" class="form-control" value="{{ simcard.transporter_name }}">
+                </div>
+                
+                <div class="mb-3">
+                  <label for="device_company" class="form-label">Device Company</label>
+                  <input type="text" name="device_company" id="device_company" class="form-control" value="{{ simcard.device_company }}">
+                </div>
+                
+                <div class="mb-3">
+                  <label for="starting_odo_meter" class="form-label">Starting Odometer Meter</label>
+                  <input type="number" name="starting_odo_meter" id="starting_odo_meter" class="form-control" value="{{ simcard.starting_odo_meter }}">
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- SIM Change Section -->
+          <div class="col-md-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+              <div class="card-header bg-light">
+                <h5 class="card-title mb-0">SIM Change Information</h5>
+              </div>
+              <div class="card-body">
+                <div class="mb-3">
+                  <label for="action" class="form-label">Action</label>
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-gear"></i></span>
+                    <input type="text" name="action" id="action" class="form-control" value="{{ simcard.action }}">
+                  </div>
+                </div>
+                
+                <div class="mb-3">
+                  <label for="new_sim_number" class="form-label">New SIM Number</label>
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-sim-fill"></i></span>
+                    <input type="text" name="new_sim_number" id="new_sim_number" class="form-control" value="{{ simcard.new_sim_number }}">
+                  </div>
+                </div>
+                
+                <div class="mb-3">
+                  <label for="reason" class="form-label">Reason</label>
+                  <textarea name="reason" id="reason" class="form-control" rows="3">{{ simcard.reason }}</textarea>
+                </div>
+                
+                <div class="mb-3">
+                  <label for="remark1" class="form-label">Remark 1</label>
+                  <textarea name="remark1" id="remark1" class="form-control" rows="2">{{ simcard.remark1 }}</textarea>
+                </div>
+                
+                <div class="mb-3">
+                  <label for="remark2" class="form-label">Remark 2</label>
+                  <textarea name="remark2" id="remark2" class="form-control" rows="2">{{ simcard.remark2 }}</textarea>
+                </div>
+                
+                <div class="mb-3">
+                  <label for="remark3" class="form-label">Remark 3</label>
+                  <textarea name="remark3" id="remark3" class="form-control" rows="2">{{ simcard.remark3 }}</textarea>
+                </div>
+                <label for="department">Department</label>
+                <select name="department" id="department" class="form-control">
+                  <option value="">-- Select Department --</option>
+                  {% for dept in departments %}
+                    <option value="{{ dept.id }}" {% if simcard and simcard.department and simcard.department.id == dept.id %}selected{% endif %}>
+                      {{ dept.name }}
+                    </option>
+                  {% endfor %}
+                </select>
+
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="mt-4 d-flex gap-2">
+          <button type="submit" class="btn btn-outline-primary">
+            <i class="fas {% if simcard %}fa-save{% else %}fa-plus-circle{% endif %} me-1"></i>
+            {% if simcard %}Update{% else %}Create{% endif %}
+          </button>
+          <a href="{% url 'departments_list' %}" class="btn btn-outline-secondary">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+// Bootstrap validation example (optional)
+(() => {
+  'use strict'
+  const forms = document.querySelectorAll('.needs-validation')
+  Array.from(forms).forEach(form => {
+    form.addEventListener('submit', event => {
+      if (!form.checkValidity()) {
+        event.preventDefault()
+        event.stopPropagation()
+      }
+      form.classList.add('was-validated')
+    }, false)
+  })
+})()
+</script>
+{% endblock %}

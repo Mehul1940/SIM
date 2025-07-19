@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container-fluid">
+  <div class="row justify-content-between align-items-center mb-4 mt-5">
+    <div class="col-md-6">
+      <h1 class="display-5 fw-bold">SIM Cards Management</h1>
+      <p class="lead text-muted">Comprehensive view of all SIM card details</p>
+    </div>
+    <div class="col-md-6 text-md-end">
+      <a href="{% url 'simcard_create' %}" class="btn btn-outline-success">
+        <i class="fas fa-plus-circle me-2"></i>Add New SIM Card
+      </a>
+    </div>
+  </div>
+
+  <!-- Filter Form -->
+  <form method="get" class="mb-3">
+    <div class="row">
+      <div class="col-md-4">
+        <select name="sim_type" class="form-select" onchange="this.form.submit()">
+          <option value="">All SIM Types</option>
+          {% for value, label in sim_types %}
+            <option value="{{ value }}" {% if sim_type_filter == value %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+  </form>
+
+  <!-- Table -->
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <div class="table-responsive mt-5">
+        <table class="table table-striped table-bordered">
+          <thead class="table-dark">
+            <tr>
+              <th scope="col" class="text-center">Vechile_NO</th>
+              <th scope="col" class="text-center">Transporter Name</th>
+              <th scope="col" class="text-center">Mobile_NO</th>
+              <th scope="col" class="text-center">Department</th>
+              <th scope="col" class="text-center">Status</th>
+              <th scope="col" class="text-center">SIM Type</th>
+              <th scope="col" class="text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for simcard in simcards %}
+            <tr>
+              <td><strong>{{ simcard.vehicle_reg_no }}</strong></td>
+              <td><strong>{{ simcard.transporter_name }}</strong></td>
+              <td><strong>{{ simcard.mobile_number|default:"-" }}</strong></td>
+              <td><strong>{{ simcard.department.name }}</strong></td>
+              <td>
+                <span class="badge 
+                  {% if simcard.sim_status == 'Available' %}bg-success
+                  {% elif simcard.sim_status == 'Blocked' %}bg-danger
+                  {% elif simcard.sim_status == 'Assigned' %}bg-warning text-dark
+                  {% else %}bg-secondary
+                  {% endif %}">
+                  {{ simcard.sim_status }}
+                </span>
+              </td>
+              <td><strong>{{ simcard.sim_type }}</strong></td>
+              <td class="text-end">
+                <div class="btn-group" role="group">
+                  <a href="{% url 'simcard_update' pk=simcard.pk %}" class="btn btn-sm btn-outline-secondary" title="Edit">
+                    <i class="fas fa-edit"></i>
+                  </a>
+                  <a href="{% url 'simcard_delete' pk=simcard.pk %}" class="btn btn-sm btn-outline-danger" title="Delete">
+                    <i class="fas fa-trash-alt"></i>
+                  </a>
+                  <a href="{% url 'simcard_detail' pk=simcard.pk %}" class="btn btn-sm btn-outline-primary" title="Detail">
+                    <i class="fas fa-eye"></i>
+                  </a>
+                </div>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="8" class="text-center py-4">
+                <i class="fas fa-sim-card fa-3x text-muted mb-3"></i>
+                <h5>No SIM Cards Found</h5>
+                <p class="text-muted">Add your first SIM card to get started</p>
+                <a href="{% url 'simcard_create' %}" class="btn btn-primary btn-sm">
+                  <i class="fas fa-plus me-1"></i> Add SIM Card
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

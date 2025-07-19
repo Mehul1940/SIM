@@ -1,0 +1,512 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %} Dashboard {% endblock %}</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/toaster.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/loader.css' %}" />
+  </head>
+
+  <body>
+    <div class="wrapper" id="wrapper">
+      <button class="mobile-nav-toggle d-md-none" id="mobileNavToggle">
+        <i class="fas fa-bars"></i>
+      </button>
+
+      <div class="sidebar" id="sidebar">
+        <div class="logo">
+          <span class="logo-text px-5">LOGO</span>
+          <button class="navbar-toggler" type="button" id="sidebarToggle">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+        </div>
+        <div class="nav-links">
+          {% block sidebar_nav %}
+          <a
+            href="{% url 'dashboard' %}"
+            class="nav-link-custom {% if 'dashboard' in request.path %}active{% endif %}"
+          >
+            <i class="fas fa-tachometer-alt fa-fw me-2"></i>
+            <span>Dashboard</span>
+          </a>
+          <a
+            href="{% url 'vehicle' %}"
+            class="nav-link-custom {% if request.resolver_match.url_name == 'vehicle' %}active{% endif %}"
+          >
+            <i class="fas fa-truck-front fa-fw me-2"></i
+            ><span>All Vehicles</span>
+          </a>
+          {# Department Dropdown #}
+          <div class="nav-item-custom dropdown">
+            <a
+              class="nav-link-custom dropdown-toggle {% if 'department' in request.path or 'pso' in request.path or 'wb' in request.path or 'margdarshak' in request.path or 'vmc' in request.path or 'local_client' in request.path %}active{% endif %}"
+              href="#"
+              id="departmentDropdown"
+              role="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#departmentSubmenu"
+              aria-expanded="{% if 'department' in request.path or 'pso' in request.path or 'wb' in request.path or 'margdarshak' in request.path or 'vmc' in request.path or 'local_client' in request.path %}true{% else %}false{% endif %}"
+              aria-controls="departmentSubmenu"
+            >
+              <i class="fas fa-building fa-fw me-2"></i>
+              <span>Department</span>
+            </a>
+            <div
+              class="collapse {% if 'department' in request.path or 'pso' in request.path or 'wb' in request.path or 'margdarshak' in request.path or 'vmc' in request.path or 'local_client' in request.path %}show{% endif %}"
+              id="departmentSubmenu"
+            >
+              <ul class="submenu-list list-unstyled fw-normal pb-1 small">
+                <li>
+                  <a
+                    href="{% url 'departments_list' %}"
+                    class="submenu-link {% if 'departments' in request.path %}active-submenu{% endif %}"
+                    ><i class="fas fa-list fa-fw me-2"></i>All Departments</a
+                  >
+                </li>
+                <li>
+                  <a
+                    href="{% url 'pso' %}"
+                    class="submenu-link {% if 'pso' in request.path %}active-submenu{% endif %}"
+                    ><i class="fas fa-id-card fa-fw me-2"></i>PSO</a
+                  >
+                </li>
+                <li>
+                  <a
+                    href="{% url 'wb' %}"
+                    class="submenu-link {% if 'wb' in request.path %}active-submenu{% endif %}"
+                    ><i class="fas fa-balance-scale fa-fw me-2"></i>WB</a
+                  >
+                </li>
+                <li>
+                  <a
+                    href="{% url 'margdarshak' %}"
+                    class="submenu-link {% if 'margdarshak' in request.path %}active-submenu{% endif %}"
+                    ><i class="fas fa-compass fa-fw me-2"></i>Margdarshak</a
+                  >
+                </li>
+                <li>
+                  <a
+                    href="{% url 'siliguri' %}"
+                    class="submenu-link {% if 'siliguri' in request.path %}active-submenu{% endif %}"
+                    ><i class="fas fa-paper-plane me-2"></i>Siliguri</a
+                  >
+                </li>
+                <li>
+                  <a
+                    href="{% url 'vmc' %}"
+                    class="submenu-link {% if 'vmc' in request.path %}active-submenu{% endif %}"
+                    ><i class="fas fa-truck-moving fa-fw me-2"></i>VMC</a
+                  >
+                </li>
+                <li>
+                  <a
+                    href="{% url 'local_client' %}"
+                    class="submenu-link {% if 'local_client' in request.path %}active-submenu{% endif %}"
+                    ><i class="fas fa-handshake fa-fw me-2"></i>Local Client</a
+                  >
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          {% comment %}
+          <a
+            href="{% url 'assignment_list' %}"
+            class="nav-link-custom {% if 'assignment' in request.path %}active{% endif %}"
+          >
+            <i class="fas fa-chart-line fa-fw me-2"></i>
+            <span>Assignment</span>
+          </a>
+          <a
+            href="{% url 'carrier_list' %}"
+            class="nav-link-custom {% if 'carriers' in request.path %}active{% endif %}"
+          >
+            <i class="fas fa-truck fa-fw me-2"></i>
+            <span>Carriers</span>
+          </a>
+          {% endcomment %} {# Inventory Dropdown #}
+          <div class="nav-item-custom dropdown">
+            <a
+              class="nav-link-custom dropdown-toggle {% if 'master' in request.path or 'dispatch' in request.path or 'return' in request.path or 'device_dispatch' in request.path or 'device_return' in request.path %}active{% endif %}"
+              href="#"
+              id="inventoryDropdown"
+              role="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#inventorySubmenu"
+              aria-expanded="{% if 'master' in request.path or 'dispatch' in request.path or 'return' in request.path or 'device_dispatch' in request.path or 'device_return' in request.path %}true{% else %}false{% endif %}"
+              aria-controls="inventorySubmenu"
+            >
+              <i class="fas fa-warehouse fa-fw me-2"></i>
+              <span>Inventory</span>
+            </a>
+            <div
+              class="collapse {% if 'master' in request.path or 'dispatch' in request.path or 'return' in request.path or 'device_dispatch' in request.path or 'device_return' in request.path %}show{% endif %}"
+              id="inventorySubmenu"
+            >
+              <ul class="submenu-list list-unstyled fw-normal pb-1 small">
+                <li>
+                  <a
+                    href="{% url 'master' %}"
+                    class="submenu-link {% if 'master' in request.path %}active-submenu{% endif %}"
+                    ><i class="fas fa-box-open fa-fw me-2"></i> All Stock</a
+                  >
+                </li>
+                <li>
+                  <a
+                    href="{% url 'dispatch' %}"
+                    class="submenu-link {% if 'dispatch' in request.path %}active-submenu{% endif %}"
+                    ><i class="fas fa-truck-loading fa-fw me-2"></i> Dispatch</a
+                  >
+                </li>
+                <li>
+                  <a
+                    href="{% url 'return' %}"
+                    class="submenu-link {% if 'return' in request.path %}active-submenu{% endif %}"
+                    ><i class="fas fa-shipping-fast fa-fw me-2"></i> Return</a
+                  >
+                </li>
+              </ul>
+            </div>
+          </div>
+          {% comment %}
+          <a
+            href="{% url 'customer_list' %}"
+            class="nav-link-custom {% if 'customers' in request.path %}active{% endif %}"
+          >
+            <i class="fas fa-users fa-fw me-2"></i>
+            <span>Customers</span>
+          </a>
+          {% endcomment %} {% endblock %}
+        </div>
+
+        <div class="user-profile">
+          <a href="{% url 'logout' %}">
+            <i class="fas fa-sign-out-alt fa-fw me-2"></i>
+            <span>Log Out</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="main-content">
+        <div id="pageLoader">
+          <div class="cube-loader">
+            <div class="cube-container">
+              <div class="cube">
+                <div class="cube-face front">
+                  <i class="fas fa-cog"></i>
+                </div>
+                <div class="cube-face back">
+                  <i class="fas fa-chart-bar"></i>
+                </div>
+                <div class="cube-face right">
+                  <i class="fas fa-users"></i>
+                </div>
+                <div class="cube-face left">
+                  <i class="fas fa-truck"></i>
+                </div>
+                <div class="cube-face top">
+                  <i class="fas fa-warehouse"></i>
+                </div>
+                <div class="cube-face bottom">
+                  <i class="fas fa-tachometer-alt"></i>
+                </div>
+              </div>
+            </div>
+            <div class="loader-text">Loading</div>
+            <div class="progress-dots">
+              <div class="progress-dot"></div>
+              <div class="progress-dot"></div>
+              <div class="progress-dot"></div>
+              <div class="progress-dot"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="main-navbar">
+          <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+            <div class="container-fluid">
+              <div class="ms-auto">
+                <div class="dropdown">
+                  <a
+                    class="nav-link dropdown-toggle d-flex align-items-center"
+                    href="#"
+                    role="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    <i class="fas fa-user-circle me-2"></i>
+                    {{ user.username }}
+                  </a>
+                  <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                      <a
+                        class="dropdown-item"
+                        href="{% url 'change_password' %}"
+                        ><i class="fas fa-cog me-2"></i>Settings</a
+                      >
+                    </li>
+                    <li>
+                      <hr class="dropdown-divider" />
+                    </li>
+                    <li>
+                      <a
+                        class="dropdown-item text-danger"
+                        href="{% url 'logout' %}"
+                        ><i class="fas fa-sign-out-alt me-2"></i>Log Out</a
+                      >
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </nav>
+        </div>
+
+        <div class="toast-container" id="toastContainer"></div>
+
+        <div class="container-fluid">{% block content %} {% endblock %}</div>
+      </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+      const pageLoader = document.getElementById("pageLoader");
+
+      // Hide loader once the new page fully loads
+      window.addEventListener("load", function () {
+        if (pageLoader) {
+          pageLoader.classList.add("hidden"); // Add 'hidden' class to trigger fade-out
+          // Optional: Remove loader from DOM after transition to free up resources
+          pageLoader.addEventListener("transitionend", function handler() {
+            pageLoader.style.display = "none";
+            pageLoader.removeEventListener("transitionend", handler);
+          });
+        }
+      });
+
+      // Show loader whenever a sidebar/navbar link is clicked
+      document.addEventListener("DOMContentLoaded", function () {
+        const links = document.querySelectorAll(
+          "#sidebar a.nav-link-custom, #sidebar .submenu-link, .main-navbar a.nav-link, .main-navbar a.dropdown-item"
+        );
+
+        links.forEach((link) => {
+          link.addEventListener("click", function (event) {
+            const href = link.getAttribute("href");
+            // Only show loader for actual navigation links, not dropdown toggles or JS-only links
+            if (
+              href &&
+              href.charAt(0) !== "#" &&
+              href !== "javascript:void(0)"
+            ) {
+              if (pageLoader) {
+                pageLoader.style.display = "flex"; // Make sure it's visible (display: flex)
+                // Remove 'hidden' class to make it fully opaque immediately
+                pageLoader.classList.remove("hidden");
+              }
+            }
+          });
+        });
+      });
+    </script>
+    <script>
+      class ModernToaster {
+        constructor() {
+          this.container = document.getElementById('toastContainer');
+          this.toasts = [];
+          this.init();
+        }
+
+        init() {
+          this.handleDjangoMessages();
+        }
+
+        handleDjangoMessages() {
+          {% if messages %}
+            {% for message in messages %}
+              var toastType;
+              var toastTitle;
+              var toastDuration;
+
+              {% if "success" in message.tags %}
+                toastType = 'success';
+                toastTitle = 'Success!';
+                toastDuration = 5000;
+              {% elif "error" in message.tags or "danger" in message.tags %}
+                toastType = 'error';
+                toastTitle = 'Error!';
+                toastDuration = 8000;
+              {% elif "warning" in message.tags %}
+                toastType = 'warning';
+                toastTitle = 'Warning!';
+                toastDuration = 6000;
+              {% elif "info" in message.tags or "debug" in message.tags %}
+                toastType = 'info';
+                toastTitle = 'Information';
+                toastDuration = 5000;
+              {% else %}
+                toastType = 'info';
+                toastTitle = 'Notification';
+                toastDuration = 5000;
+              {% endif %}
+
+              this.show({
+                type: toastType,
+                title: toastTitle,
+                message: '{{ message|escapejs }}',
+                duration: toastDuration
+              });
+            {% endfor %}
+          {% endif %}
+        }
+
+        getTitleForType(type) {
+          const titles = {
+            'success': 'Success!',
+            'error': 'Error!',
+            'danger': 'Error!',
+            'warning': 'Warning!',
+            'info': 'Information',
+            'debug': 'Debug'
+          };
+          return titles[type] || 'Notification';
+        }
+
+        getIconForType(type) {
+          const icons = {
+            'success': 'fas fa-check',
+            'error': 'fas fa-times',
+            'warning': 'fas fa-exclamation-triangle',
+            'info': 'fas fa-info'
+          };
+          return icons[type] || 'fas fa-bell';
+        }
+
+        show(options = {}) {
+          const {
+            type = 'info',
+            title = 'Notification',
+            message = '',
+            duration = 5000,
+            showProgress = true
+          } = options;
+
+          const toastId = 'toast-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+          const toast = document.createElement('div');
+          toast.id = toastId;
+          toast.className = `modern-toast ${type}`;
+
+          toast.innerHTML = `
+            <div class="toast-icon">
+              <i class="${this.getIconForType(type)}"></i>
+            </div>
+            <div class="toast-content">
+              <div class="toast-title">${title}</div>
+              <div class="toast-message">${message}</div>
+            </div>
+            <button class="toast-close" onclick="toaster.hide('${toastId}')">
+              <i class="fas fa-times"></i>
+            </button>
+            ${showProgress ? '<div class="toast-progress" style="width: 100%;"></div>' : ''}
+          `;
+
+          this.container.appendChild(toast);
+          this.toasts.push({ id: toastId, element: toast });
+
+          setTimeout(() => {
+            toast.classList.add('show');
+          }, 100);
+
+          if (duration > 0) {
+            this.autoHide(toastId, duration, showProgress);
+          }
+
+          return toastId;
+        }
+
+        autoHide(toastId, duration, showProgress) {
+          const toast = document.getElementById(toastId);
+          if (!toast) return;
+
+          if (showProgress) {
+            const progressBar = toast.querySelector('.toast-progress');
+            if (progressBar) {
+              progressBar.style.transition = `width ${duration}ms linear`;
+              progressBar.style.width = '0%';
+            }
+          }
+
+          setTimeout(() => {
+            this.hide(toastId);
+          }, duration);
+        }
+
+        hide(toastId) {
+          const toast = document.getElementById(toastId);
+          if (!toast) return;
+
+          toast.classList.remove('show');
+          toast.classList.add('hide');
+
+          setTimeout(() => {
+            if (toast.parentNode) {
+              toast.parentNode.removeChild(toast);
+            }
+            this.toasts = this.toasts.filter(t => t.id !== toastId);
+          }, 400);
+        }
+
+        hideAll() {
+          this.toasts.forEach(t => this.hide(t.id));
+        }
+
+        success(message, title = 'Success!', duration = 5000) {
+          return this.show({ type: 'success', title, message, duration });
+        }
+
+        error(message, title = 'Error!', duration = 8000) {
+          return this.show({ type: 'error', title, message, duration });
+        }
+
+        warning(message, title = 'Warning!', duration = 6000) {
+          return this.show({ type: 'warning', title, message, duration });
+        }
+
+        info(message, title = 'Information', duration = 5000) {
+          return this.show({ type: 'info', title, message, duration });
+        }
+      }
+
+      // Initialize toaster
+      const toaster = new ModernToaster();
+      window.toaster = toaster;
+
+      // Example usage (for testing)
+      function showExampleToasts() {
+        toaster.success('Operation completed successfully!');
+        setTimeout(() => toaster.warning('This is a warning message'), 1000);
+        setTimeout(() => toaster.error('Something went wrong!'), 2000);
+        setTimeout(() => toaster.info('Here is some information for you'), 3000);
+      }
+    </script>
+
+    <script src="{% static 'js/sidebar.js' %}"></script>
+    <script src="{% static 'js/dashboard.js' %}"></script>
+    {% block scripts %} {% endblock %}
+  </body>
+</html>

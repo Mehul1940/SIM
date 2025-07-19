@@ -1,0 +1,238 @@
+{% extends 'base.html' %} {% block content %}
+<div class="container py-4">
+  <div class="card shadow-sm">
+    <div
+      class="card-header bg-primary text-white d-flex justify-content-between align-items-center"
+    >
+      <h4 class="mb-0">SIM Card Details</h4>
+      <span class="badge bg-light text-primary">{{ simcard.sim_status }}</span>
+    </div>
+
+    <div class="card-body">
+      <div class="row">
+        <!-- Primary Information -->
+        <div class="col-md-6 mb-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-header bg-light">
+              <h5 class="card-title mb-0">Primary Information</h5>
+            </div>
+            <div class="card-body">
+              <div class="mb-2">
+                <small class="text-muted">SIM Number (ICCID)</small>
+                <p class="mb-1 fw-bold">{{ simcard.iccid_number }}</p>
+              </div>
+              <div class="mb-2">
+                <small class="text-muted">Mobile Number</small>
+                <p class="mb-1 fw-bold">{{ simcard.mobile_number }}</p>
+              </div>
+              <div class="mb-2">
+                <small class="text-muted">IMSI Number</small>
+                <p class="mb-1 fw-bold">{{ simcard.imsi_number }}</p>
+              </div>
+              <div class="mb-2">
+                <small class="text-muted">Carrier</small>
+                <p class="mb-1">
+                  {% if simcard.carrier %} {{ simcard.carrier.name }} {% else %}
+                  N/A {% endif %}
+                </p>
+              </div>
+              <div class="mb-2">
+                <small class="text-muted">Basket Name</small>
+                <p class="mb-1">{{ simcard.basket_name }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Plan Details -->
+        <div class="col-md-6 mb-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-header bg-light">
+              <h5 class="card-title mb-0">Plan Details</h5>
+            </div>
+            <div class="card-body">
+              <div class="mb-2">
+                <small class="text-muted">Plan Name</small>
+                <p class="mb-1 fw-bold">{{ simcard.plan_name }}</p>
+              </div>
+              <div class="mb-2">
+                <small class="text-muted">Plan Type</small>
+                <p class="mb-1">{{ simcard.plan_type }}</p>
+              </div>
+              <div class="mb-2">
+                <small class="text-muted">SIM Type</small>
+                <p class="mb-1">{{ simcard.sim_type }}</p>
+              </div>
+              <div class="mb-2">
+                <small class="text-muted">Action</small>
+                <p class="mb-1">{{ simcard.action }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Remarks & Additional Info -->
+        <div class="col-md-6 mb-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-header bg-light">
+              <h5 class="card-title mb-0">Remarks & Additional Info</h5>
+            </div>
+            <div class="card-body">
+              <div class="mb-2">
+                <small class="text-muted">IMEI Number</small>
+                <p class="mb-1">{{ simcard.imei_number }}</p>
+              </div>
+              <div class="mb-2">
+                <small class="text-muted">Current IP</small>
+                <p class="mb-1">{{ simcard.current_ip }}</p>
+              </div>
+              <div class="mb-2">
+                <small class="text-muted">Last Connected</small>
+                <p class="mb-1">{{ simcard.last_connected }}</p>
+              </div>
+              <div class="mb-2">
+                <small class="text-muted">Remarks 1</small>
+                <p class="mb-1">{{ simcard.remark1 }}</p>
+              </div>
+              <div class="mb-2">
+                <small class="text-muted">Remarks 2</small>
+                <p class="mb-1">{{ simcard.remark2 }}</p>
+              </div>
+              <div class="mb-2">
+                <small class="text-muted">Remarks 3</small>
+                <p class="mb-1">{{ simcard.remark3 }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SIM Card Changes -->
+        <div class="col-md-6 mb-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-header bg-light">
+              <h5 class="card-title mb-0">SIM Card Changes</h5>
+            </div>
+            <div class="card-body">
+              <div class="mb-2">
+                <small class="text-muted">New SIM Number</small>
+                <p class="mb-1">{{ simcard.new_sim_number }}</p>
+              </div>
+              <div class="mb-2">
+                <small class="text-muted">Reason</small>
+                <p class="mb-1">{{ simcard.reason }}</p>
+              </div>
+              <div class="mb-2">
+                <small class="text-muted">Created At</small>
+                <p class="mb-1">{{ simcard.created_at }}</p>
+              </div>
+              <div class="mb-2">
+                <small class="text-muted">Updated At</small>
+                <p class="mb-1">{{ simcard.updated_at }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Additional Vehicle Info -->
+        <div class="col-md-6 mb-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-header bg-light">
+              <h5 class="card-title mb-0">Vehicle & Device Info</h5>
+            </div>
+            <div class="card-body">
+              <div class="mb-2">
+                <small class="text-muted">Vehicle Registration No</small>
+                <p class="mb-1">{{ simcard.vehicle_reg_no }}</p>
+              </div>
+              <div class="mb-2">
+                <small class="text-muted">Transporter Name</small>
+                <p class="mb-1">{{ simcard.transporter_name }}</p>
+              </div>
+              <div class="mb-2">
+                <small class="text-muted">Device Company</small>
+                <p class="mb-1">{{ simcard.device_company }}</p>
+              </div>
+              <div class="mb-2">
+                <small class="text-muted">Starting Odometer Meter</small>
+                <p class="mb-1">{{ simcard.starting_odo_meter }}</p>
+              </div>
+              {% if simcard.department %}
+              <div class="mb-2">
+                <small class="text-muted">Departments</small>
+                <p class="mb-1">{{ simcard.department.name }}</p>
+              </div>
+              {% else %}
+              <p><em>No department assigned</em></p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer bg-light">
+      <div class="d-flex gap-2">
+        <a
+          href="{% url 'simcard_update' pk=simcard.pk %}"
+          class="btn btn-outline-secondary"
+        >
+          <i class="fas fa-edit"></i> Edit
+        </a>
+        <button
+          type="button"
+          class="btn btn-outline-danger"
+          data-bs-toggle="modal"
+          data-bs-target="#deleteConfirmModal"
+        >
+          <i class="fas fa-trash-alt"></i> Delete
+        </button>
+        <a href="{% url 'departments_list' %}" class="btn btn-outline-primary">
+          Back to List
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div
+  class="modal fade"
+  id="deleteConfirmModal"
+  tabindex="-1"
+  aria-labelledby="deleteConfirmModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title" id="deleteConfirmModalLabel">
+          Confirm Deletion
+        </h5>
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to delete this SIM card record?
+        <p class="mt-2 mb-0">
+          <strong>SIM Number (ICCID):</strong> {{ simcard.iccid_number }}<br />
+          <strong>Mobile Number:</strong> {{ simcard.mobile_number }}
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Cancel
+        </button>
+        <a
+          href="{% url 'simcard_delete' pk=simcard.pk %}"
+          class="btn btn-danger"
+          >Delete</a
+        >
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

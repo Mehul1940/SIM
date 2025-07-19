@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex flex-column align-items-center">
+        <!-- Header Section -->
+        <div class="text-center mb-5 col-12 col-lg-8 col-xl-6">
+            <h2 class="display-5 fw-bold mb-3">
+                <i class="fas fa-sim-card text-primary me-2"></i> {{ form_action }} SIM Assignment
+            </h2>
+        </div>
+
+        <!-- Form Card -->
+        <div class="col-12 col-lg-8 col-xl-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <!-- SIM Card Field -->
+                        <div class="row mb-4">
+                            <label class="col-md-3 col-form-label fw-bold">SIM Card</label>
+                            <div class="col-md-9">
+                                {% if form_action == "Create" %}
+                                    <select name="sim_card" class="form-select" required>
+                                        <option value="" disabled selected>Select SIM Card</option>
+                                        {% for sim in sims %}
+                                            <option value="{{ sim.id }}">{{ sim.sim_number }}</option>
+                                        {% endfor %}
+                                    </select>
+                                {% else %}
+                                    <input type="text" class="form-control" 
+                                           value="{{ assignment.sim_card.sim_number }}" disabled>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Customer Field -->
+                        <div class="row mb-4">
+                            <label class="col-md-3 col-form-label fw-bold">Customer</label>
+                            <div class="col-md-9">
+                                <select name="customer" class="form-select" required>
+                                    <option value="" disabled selected>Select Customer</option>
+                                    {% for customer in customers %}
+                                        <option value="{{ customer.id }}" 
+                                                {% if assignment and assignment.customer.id == customer.id %}selected{% endif %}>
+                                            {{ customer.full_name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Date Fields -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <label class="col-md-6 col-form-label fw-bold">Activation Date</label>
+                                    <div class="col-md-6">
+                                        <input type="date" name="activation_date" class="form-control" 
+                                               value="{{ assignment.activation_date|date:'Y-m-d' }}" 
+                                               {% if form_action == 'Update' %}disabled{% endif %} required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <label class="col-md-6 col-form-label fw-bold">Expiry Date</label>
+                                    <div class="col-md-6">
+                                        <input type="date" name="expiry_date" class="form-control" 
+                                               value="{{ assignment.expiry_date|date:'Y-m-d' }}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Status Checkbox -->
+                        <div class="row mb-4 align-items-center">
+                            <label class="col-md-3 col-form-label fw-bold">Status</label>
+                            <div class="col-md-9">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch" 
+                                           name="is_active" id="is_active" 
+                                           {% if assignment.is_active %}checked{% endif %}>
+                                    <label class="form-check-label" for="is_active">
+                                        Active
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Reason Field -->
+                        <div class="row mb-4">
+                            <label class="col-md-3 col-form-label fw-bold">Reason</label>
+                            <div class="col-md-9">
+                                <textarea name="reason" class="form-control" rows="2">{{ assignment.reason }}</textarea>
+                            </div>
+                        </div>
+
+                        <!-- Notes Field -->
+                        <div class="row mb-4">
+                            <label class="col-md-3 col-form-label fw-bold">Notes</label>
+                            <div class="col-md-9">
+                                <textarea name="notes" class="form-control" rows="3">{{ assignment.notes }}</textarea>
+                            </div>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="row mt-5">
+                            <div class="col-md-9 offset-md-3">
+                                <div class="d-flex gap-2">
+                                    <button type="submit" class="btn btn-outline-success px-4 ">
+                                        <i class="fas fa-save me-2"></i> {{ form_action }}
+                                    </button>
+                                    <a href="{% url 'assignment_list' %}" 
+                                       class="btn btn-outline-secondary px-4  ml-2">
+                                        Cancel
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
